@@ -1,7 +1,8 @@
-
+var svg;
 (function(){
   var quakesURL = "http://apis.is/earthquake/is";
-  getAndExtractQuakesEventHandler(quakesURL, getQuakes, extractQuakes, renderQuakes)
+  createSVGCanvas();
+  getAndExtractQuakesEventHandler(quakesURL, getQuakes, extractQuakes, renderQuakes);
 
 })();
 
@@ -49,4 +50,8 @@ function renderQuakes(quakes){
       })
       .style('width', '20px');
   // })
+}
+
+function createSVGCanvas(){
+  svg = d3.select('.quake-events').append('svg').attr('class', 'quake-canvas')
 }
