@@ -23,25 +23,30 @@ function extractQuakes(quakeResults){
 
 function renderQuakes(quakes){
   // quakes.forEach(function(index, quake){
-    d3.select('.quake-events').selectAll('p')
+    d3.select('.quake-events').selectAll('div')
       .data(quakes)
       .enter()
-      .append('p')
-      .text(function(d){
-        return d.size
-      })
-      .style("color", function(d){
+      .append('div')
+      .attr('class', 'bar')
+      // .text(function(d){
+      //   return d.size
+      // })
+      .style("background-color", function(d){
         if (d.size <= 0.5){
           return "grey";
         } else if (d.size <= 0.75) {
-          return "lightgreen"
+          return "lightgreen";
         } else if (d.size <= 1){
-          return "green"
+          return "green";
         } else if (d.size <= 1.25){
-          return "blue"
+          return "blue";
         } else if (d.size > 1.25){
-          return "red"
+          return "red";
         }
       })
+      .style('height', function(d){
+        return (d.size * 100) + 'px';
+      })
+      .style('width', '20px');
   // })
 }
