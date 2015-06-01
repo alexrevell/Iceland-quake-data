@@ -27,6 +27,21 @@ function renderQuakes(quakes){
       .data(quakes)
       .enter()
       .append('p')
-      .text(function(d){return d});
+      .text(function(d){
+        return d.size
+      })
+      .style("color", function(d){
+        if (d.size <= 0.5){
+          return "grey";
+        } else if (d.size <= 0.75) {
+          return "lightgreen"
+        } else if (d.size <= 1){
+          return "green"
+        } else if (d.size <= 1.25){
+          return "blue"
+        } else if (d.size > 1.25){
+          return "red"
+        }
+      })
   // })
 }
