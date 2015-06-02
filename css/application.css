@@ -11,11 +11,11 @@ div.bar {
   display: inline-block;
   height: 75px;
   width: 20px;
-  margin-right: 2px;
+  margin-right: 1px;
   background-color: teal;
 }
 
 svg .quake-canvas {
-  height: 200;
-  width: 400;
+  height: 100;
+  width: 500;
 }
