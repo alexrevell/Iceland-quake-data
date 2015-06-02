@@ -93,7 +93,10 @@ function renderQuakes(quakes){
         .attr('height', function(d){
           return d.size * 100;
         })
-        .attr('width', svgWidth / realQuakes.length - barPadding);
+        .attr('width', svgWidth / realQuakes.length - barPadding)
+        .attr('fill', function(d){
+          return "rgb(0,"+ (d.size * 100) +",0)";
+        });
         //   function(d, i){
         //   return i * (svgWidth / realQuakes.length - barPadding);
         // });
