@@ -33,18 +33,33 @@ function renderQuakes(quakes){
       //   return d.size
       // })
       .style("background-color", function(d){
-        if (d.size <= 0.5){
-          return "grey";
-        } else if (d.size <= 0.75) {
-          return "lightgreen";
-        } else if (d.size <= 1){
-          return "green";
-        } else if (d.size <= 1.25){
-          return "blue";
-        } else if (d.size > 1.25){
+        // if (d.size <= 0.5){
+        //   return "grey";
+        // } else if (d.size <= 0.75) {
+        //   return "lightgreen";
+        // } else if (d.size <= 1){
+        //   return "green";
+        // } else if (d.size <= 1.25){
+        //   return "blue";
+        // } else if (d.size > 1.25){
           return "red";
-        }
+        // }
       })
+      .attr("opacity", function(d){
+        return d.size;
+      })
+      //   if (d.size <= 0.5){
+      //     return 0.1;
+      //   } else if (d.size <= 0.75) {
+      //     return 0.3;
+      //   } else if (d.size <= 1){
+      //     return 0.5;
+      //   } else if (d.size <= 1.25){
+      //     return 0.75;
+      //   } else if (d.size > 1.25){
+      //     return 0.95;
+      //   }
+      // })
       .style('height', function(d){
         return (d.size * 100) + 'px';
       })
