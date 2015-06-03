@@ -1,6 +1,6 @@
 var pusher = new Pusher('fd6aa7a99cd60a7f3510');
 var svg;
-var svgHeight = 400;
+var svgHeight = 300;
 var svgWidth = 500;
 var barPadding = 1;
 (function(){
@@ -12,6 +12,7 @@ var barPadding = 1;
 function getAndExtractQuakesEventHandler(url, getQuakes, extractQuakes, renderQuakes){
   getQuakes(url, function(data){
     var quakes = extractQuakes(data);
+    console.log(quakes)
     renderQuakes(quakes)
   })
 }
@@ -86,7 +87,7 @@ function renderQuakes(quakes){
         .attr('fill', 'white');
 
     svg.append('text')
-        .text('Earthquake size by time')
+        .text('Earthquakes by size over last 48 hours')
         .attr('x', 20)
-        .attr('y', 20);
+        .attr('y', 100);
 }
