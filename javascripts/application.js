@@ -90,4 +90,50 @@ function renderQuakes(quakes){
         .text('Earthquakes by size over last 48 hours')
         .attr('x', 20)
         .attr('y', 100);
+
+    var svgMap = d3.select('body')
+            .append('svg')
+            .attr('height', svgHeight)
+            .attr('width', svgWidth)
+            .attr('class', 'quake-map-canvas');
+
+    var xScale = d3.scale.linear()
+                  .domain([d3.min(realQuakes, function(d){return d.longitude;}), d3.max(realQuakes, function(d){return d.longitude;})])
+                  .range([0, svgWidth]);
+
+    var yScale = d3.scale.linear()
+                  .domain([d3.min(realQuakes, function(d){return d.latitude;}), d3.max(realQuakes, function(d){return d.latitude;})])
+                  .range([0, svgHeight]);
+
+    svgMap.selectAll('circle')
+            .data(realQuakes)
+            .enter()
+            .append('circle')
+            .attr('cx', function(d){
+              return xScale(d.longitude);
+            })
+            .attr('cy', function(d){
+              return yScale(d.latitude);
+            })
+            .attr('r', function(d){
+              return d.size * 10;
+            });
+
+    svgMap.selectAll('text')
+            .data(realQuakes)
+            .enter()
+            .append('text')
+            .text(function(d){
+              return d.longitude + ", " + d.latitude;
+            })
+            .attr('x', function(d){
+              return xScale(d.longitude);
+            })
+            .attr('y', function(d){
+              return yScale(d.latitude);
+            })
+            .attr('font-family', 'sans-serif')
+            .attr('font-size', '11px')
+            .attr('fill', 'red');
+
 }
