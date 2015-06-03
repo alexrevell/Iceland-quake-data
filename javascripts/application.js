@@ -1,5 +1,6 @@
+var pusher = new Pusher('fd6aa7a99cd60a7f3510');
 var svg;
-var svgHeight = 200;
+var svgHeight = 300;
 var svgWidth = 500;
 var barPadding = 1;
 (function(){
@@ -11,6 +12,7 @@ var barPadding = 1;
 function getAndExtractQuakesEventHandler(url, getQuakes, extractQuakes, renderQuakes){
   getQuakes(url, function(data){
     var quakes = extractQuakes(data);
+    console.log(quakes)
     renderQuakes(quakes)
   })
 }
@@ -31,49 +33,17 @@ function renderQuakes(quakes){
 
   var realQuakes = quakes.filter(getRealQuakes)
 
-  // quakes.forEach(function(index, quake){
     d3.select('.quake-events').selectAll('div')
       .data(realQuakes)
       .enter()
       .append('div')
       .attr('class', 'bar')
-      // .text(function(d){
-      //   return d.size
-      // })
-      .style("background-color", function(d){
-        // if (d.size <= 0.5){
-        //   return "grey";
-        // } else if (d.size <= 0.75) {
-        //   return "lightgreen";
-        // } else if (d.size <= 1){
-        //   return "green";
-        // } else if (d.size <= 1.25){
-        //   return "blue";
-        // } else if (d.size > 1.25){
-          return "red";
-        // }
-      })
-      .attr("opacity", function(d){
-        return d.size;
-      })
-      //   if (d.size <= 0.5){
-      //     return 0.1;
-      //   } else if (d.size <= 0.75) {
-      //     return 0.3;
-      //   } else if (d.size <= 1){
-      //     return 0.5;
-      //   } else if (d.size <= 1.25){
-      //     return 0.75;
-      //   } else if (d.size > 1.25){
-      //     return 0.95;
-      //   }
-      // })
+      .style("background-color","red")
       .style('height', function(d){
         return (d.size * 100) + 'px';
       })
       .style('width', '15px');
-  // })
-  // function createSVGCanvas(){
+
     svg = d3.select('body')
             .append('svg')
             .attr('height', svgHeight)
@@ -88,17 +58,36 @@ function renderQuakes(quakes){
           return i * svgWidth / realQuakes.length;
         })
         .attr('y', function(d){
-          return svgHeight - d.size * 100;
+          return svgHeight - d.size * 80;
         })
         .attr('height', function(d){
-          return d.size * 100;
+          return d.size * 80;
         })
         .attr('width', svgWidth / realQuakes.length - barPadding)
         .attr('fill', function(d){
-          return "rgb(0,"+ (d.size * 100) +",0)";
+          return "rgb("+ (d.size * 120) +",0,0)";
         });
-        //   function(d, i){
-        //   return i * (svgWidth / realQuakes.length - barPadding);
-        // });
-  // }
+
+    svg.selectAll('text')
+        .data(realQuakes)
+        .enter()
+        .append('text')
+        .text(function(d, i){
+          return d.size;
+        })
+        .attr('x', function(d, i){
+          return i * (svgWidth / realQuakes.length) + (svgWidth / realQuakes.length - barPadding) / 2;
+        })
+        .attr('y', function(d, i){
+          return svgHeight - d.size * 80 + 10;
+        })
+        .attr('text-anchor', 'middle')
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', '10px')
+        .attr('fill', 'white');
+
+    svg.append('text')
+        .text('Earthquakes by size over last 48 hours')
+        .attr('x', 20)
+        .attr('y', 100);
 }
