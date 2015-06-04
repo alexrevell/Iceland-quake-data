@@ -99,11 +99,19 @@ function renderQuakes(quakes){
             .attr('class', 'quake-map-canvas');
 
     var xScale = d3.scale.linear()
-                  .domain([d3.min(realQuakes, function(d){return d.longitude;}), d3.max(realQuakes, function(d){return d.longitude;})])
-                  .range([scatterPadding, svgWidth - scatterPadding]);
+                  .domain([d3.min(realQuakes, function(d){
+                    return d.longitude;
+                    }), d3.max(realQuakes, function(d){
+                      return d.longitude;
+                    })])
+                  .range([scatterPadding, svgWidth - scatterPadding * 4]);
 
     var yScale = d3.scale.linear()
-                  .domain([d3.min(realQuakes, function(d){return d.latitude;}), d3.max(realQuakes, function(d){return d.latitude;})])
+                  .domain([d3.min(realQuakes, function(d){
+                    return d.latitude;
+                    }), d3.max(realQuakes, function(d){
+                      return d.latitude;
+                    })])
                   .range([svgHeight - scatterPadding, scatterPadding]);
 
     svgMap.selectAll('circle')
@@ -136,5 +144,10 @@ function renderQuakes(quakes){
             .attr('font-family', 'sans-serif')
             .attr('font-size', '11px')
             .attr('fill', 'red');
+
+    svgMap.append('text')
+        .text('Earthquake latitude & longitude with size')
+        .attr('x', 20)
+        .attr('y', 100);
 
 }
