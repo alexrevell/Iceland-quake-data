@@ -114,6 +114,12 @@ function renderQuakes(quakes){
                     })])
                   .range([svgHeight - scatterPadding, scatterPadding]);
 
+    var rScale = d3.scale.linear()
+                    .domain([0, d3.max(realQuakes, function(d){
+                      return d.size;
+                    })])
+                    .range([0, 10]);
+
     svgMap.selectAll('circle')
             .data(realQuakes)
             .enter()
@@ -125,7 +131,7 @@ function renderQuakes(quakes){
               return yScale(d.latitude);
             })
             .attr('r', function(d){
-              return d.size * 10;
+              return rScale(d.size);
             });
 
     svgMap.selectAll('text')
