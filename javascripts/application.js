@@ -3,6 +3,7 @@ var svg;
 var svgHeight = 300;
 var svgWidth = 500;
 var barPadding = 1;
+var scatterPadding = 20;
 (function(){
   var quakesURL = "http://apis.is/earthquake/is";
   getAndExtractQuakesEventHandler(quakesURL, getQuakes, extractQuakes, renderQuakes);
@@ -99,11 +100,11 @@ function renderQuakes(quakes){
 
     var xScale = d3.scale.linear()
                   .domain([d3.min(realQuakes, function(d){return d.longitude;}), d3.max(realQuakes, function(d){return d.longitude;})])
-                  .range([0, svgWidth]);
+                  .range([scatterPadding, svgWidth - scatterPadding]);
 
     var yScale = d3.scale.linear()
                   .domain([d3.min(realQuakes, function(d){return d.latitude;}), d3.max(realQuakes, function(d){return d.latitude;})])
-                  .range([0, svgHeight]);
+                  .range([svgHeight - scatterPadding, scatterPadding]);
 
     svgMap.selectAll('circle')
             .data(realQuakes)
