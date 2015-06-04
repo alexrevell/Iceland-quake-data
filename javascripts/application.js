@@ -29,7 +29,7 @@ function extractQuakes(quakeResults){
 function renderQuakes(quakes){
 
    function getRealQuakes(quake){
-    return quake.size > 0;
+    return quake.size >= 0;
   }
 
   var realQuakes = quakes.filter(getRealQuakes)
