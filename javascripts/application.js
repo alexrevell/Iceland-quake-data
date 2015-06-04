@@ -1,121 +1,171 @@
-var pusher = new Pusher('fd6aa7a99cd60a7f3510');
-var svg;
-var svgHeight = 300;
-var svgWidth = 500;
-var barPadding = 1;
-var scatterPadding = 20;
-(function(){
+IcelandQuakes = (function(){
+  var svg
+  var svgHeight = 300
+  var svgWidth = 500
+  var barPadding = 1
+  var scatterPadding = 20
   var quakesURL = "http://apis.is/earthquake/is";
-  getAndExtractQuakesEventHandler(quakesURL, getQuakes, extractQuakes, renderQuakes);
+  var updateQuakesButton
 
-})();
+  var bindEventListeners = function () {
+    updateQuakesButton = d3.select('.update-quakes')
+    updateQuakesButton.on('click', function() {
+      getQuakesJson(quakesURL)
+      .then(function(response) {
+        console.log("response", response)
+      })
+    })
+  }
+    // var promise = new Promise(function(resolve, reject) {
+    //   resolve(getQuakesJson(quakesURL))
+    // });
 
-function getAndExtractQuakesEventHandler(url, getQuakes, extractQuakes, renderQuakes){
-  getQuakes(url, function(data){
-    var quakes = extractQuakes(data);
-    console.log(quakes)
-    renderQuakes(quakes)
-  })
-}
+  // promise.then(function(){console.log("got some stuff")})
 
-function getQuakes(url, callback){
-  d3.json(url, callback);
-}
+    // console.log(updateQuakesButton)
+    // updateQuakesButton.submit(function(){console.log("submitted for more quakes!")})
+    // getAndExtractQuakesEventHandler(quakesURL, getQuakes, extractQuakes, renderQuakes)
+    // pullQuakes(quakesURL).then(function(result){ console.log("Got quakes bro!", result)}, function(err){console.log("stink buzz bro!", err)})
+    // getQuakesJson(quakesURL)
+  // })();
 
-function extractQuakes(quakeResults){
-  return quakeResults.results
-}
-
-function renderQuakes(quakes){
-
-   function getRealQuakes(quake){
-    return quake.size >= 0;
+  function getAndExtractQuakesEventHandler(url, getQuakes, extractQuakes, renderQuakes){
+    getQuakes(url, function(data){
+      var quakes = extractQuakes(data)
+      realQuakes = quakes.filter(getRealQuakes)
+      renderQuakes(realQuakes)
+    })
   }
 
-  var realQuakes = quakes.filter(getRealQuakes)
+  function getQuakesJson(url) {
+    // d3.json(url)
 
-    d3.select('.quake-events').selectAll('div')
-      .data(realQuakes)
-      .enter()
-      .append('div')
-      .attr('class', 'bar')
-      .style("background-color","red")
-      .style('height', function(d){
-        return (d.size * 100) + 'px';
-      })
-      .style('width', '15px');
+    return new Promise(function (resolve, reject) {
+      var request = new XMLHttpRequest()
+      request.open('GET', url)
 
-    svg = d3.select('body')
-            .append('svg')
-            .attr('height', svgHeight)
-            .attr('width', svgWidth)
-            .attr('class', 'quake-canvas');
+      request.onload = function() {
+        if (request.status === 200) {
+          resolve(request.response)
+        }
+        else {
+          reject(Error("Quake data didn't load successfully; error code:" + request.statusText));
+        }
+      }
 
-    svg.selectAll('rect')
-        .data(realQuakes)
+      request.onerror = function() {
+        reject(Error("Something erroreed like the network."))
+      }
+
+      request.send()
+    })
+  }
+
+
+  // setInterval(function() { getQuakesJson(quakesURL), 2000})
+
+  function getQuakes(url, callback){
+    d3.json(url, callback)
+  }
+
+  function extractQuakes(quakeResults){
+    return quakeResults.results
+  }
+
+  function getRealQuakes(quake){
+    return quake.size >= 0
+  }
+
+  function renderQuakes(quakes){
+
+      d3.select('.quake-events').selectAll('div')
+        .data(quakes)
         .enter()
-        .append('rect')
-        .attr('x', function(d, i){
-          return i * svgWidth / realQuakes.length;
+        .append('div')
+        .attr('class', 'bar')
+        .style("background-color","red")
+        .style('height', function(d){
+          return (d.size * 30) + 'px';
         })
-        .attr('y', function(d){
-          return svgHeight - d.size * 80;
-        })
-        .attr('height', function(d){
-          return d.size * 80;
-        })
-        .attr('width', svgWidth / realQuakes.length - barPadding)
-        .attr('fill', function(d){
-          return "rgb("+ (d.size * 120) +",0,0)";
-        });
+        .style('width', '10px');
 
-    svg.selectAll('text')
-        .data(realQuakes)
-        .enter()
-        .append('text')
-        .text(function(d, i){
-          return d.size;
-        })
-        .attr('x', function(d, i){
-          return i * (svgWidth / realQuakes.length) + (svgWidth / realQuakes.length - barPadding) / 2;
-        })
-        .attr('y', function(d, i){
-          return svgHeight - d.size * 80 + 10;
-        })
-        .attr('text-anchor', 'middle')
-        .attr('font-family', 'sans-serif')
-        .attr('font-size', '10px')
-        .attr('fill', 'white');
+      svg = d3.select('.container-quakes')
+              .append('svg')
+              .attr('height', svgHeight)
+              .attr('width', svgWidth)
+              .attr('class', 'quake-canvas');
 
-    svg.append('text')
-        .text('Earthquakes by size over last 48 hours')
-        .attr('x', 20)
-        .attr('y', 100);
+      svg.selectAll('rect')
+          .data(quakes)
+          .enter()
+          .append('rect')
+          .attr('x', function(d, i){
+            return i * svgWidth / quakes.length;
+          })
+          .attr('y', function(d){
+            return svgHeight - d.size * 80;
+          })
+          .attr('height', function(d){
+            return d.size * 80;
+          })
+          .attr('width', svgWidth / quakes.length - barPadding)
+          .attr('fill', function(d){
+            return "rgb("+ (d.size * 120) +",0,0)";
+          });
 
-    var svgMap = d3.select('body')
-            .append('svg')
-            .attr('height', svgHeight)
-            .attr('width', svgWidth)
-            .attr('class', 'quake-map-canvas');
+      svg.selectAll('text')
+         .data(quakes)
+         .enter()
+         .append('text')
+         .text(function(d, i){
+            return d.size;
+          })
+         .attr('x', function(d, i){
+            return i * (svgWidth / quakes.length) + (svgWidth / quakes.length - barPadding) / 2;
+          })
+         .attr('y', function(d, i){
+            return svgHeight - d.size * 80 + 10;
+          })
+         .attr('text-anchor', 'middle')
+         .attr('font-family', 'sans-serif')
+         .attr('font-size', '10px')
+         .attr('fill', 'white');
 
-    var xScale = d3.scale.linear()
-                  .domain([d3.min(realQuakes, function(d){
-                    return d.longitude;
-                    }), d3.max(realQuakes, function(d){
-                      return d.longitude;
-                    })])
-                  .range([scatterPadding, svgWidth - scatterPadding * 4]);
+      svg.append('text')
+         .text('Earthquakes by size over last 48 hours')
+         .attr('x', 20)
+         .attr('y', 100);
 
-    var yScale = d3.scale.linear()
-                  .domain([d3.min(realQuakes, function(d){
-                    return d.latitude;
-                    }), d3.max(realQuakes, function(d){
-                      return d.latitude;
-                    })])
-                  .range([svgHeight - scatterPadding, scatterPadding]);
+      var svgMap = d3.select('.container-quakes')
+                     .append('svg')
+                     .attr('height', svgHeight)
+                     .attr('width', svgWidth)
+                     .attr('class', 'quake-map-canvas');
 
-    svgMap.selectAll('circle')
-            .data(realQuakes)
+      var xScale = d3.scale.linear()
+                     .domain([d3.min(quakes, function(d){
+                        return d.longitude;
+                      }), d3.max(quakes, function(d){
+                        return d.longitude;
+                      })])
+                     .range([scatterPadding, svgWidth - scatterPadding * 4]);
+
+      var yScale = d3.scale.linear()
+                     .domain([d3.min(quakes, function(d){
+                        return d.latitude;
+                      }), d3.max(quakes, function(d){
+                        return d.latitude;
+                      })])
+                     .range([svgHeight - scatterPadding, scatterPadding]);
+
+      var rScale = d3.scale.linear()
+                     .domain([0, d3.max(quakes, function(d){
+                        return d.size;
+                      })])
+                     .range([0, 10]);
+
+      svgMap.selectAll('circle')
+            .data(quakes)
             .enter()
             .append('circle')
             .attr('cx', function(d){
@@ -125,11 +175,11 @@ function renderQuakes(quakes){
               return yScale(d.latitude);
             })
             .attr('r', function(d){
-              return d.size * 10;
+              return rScale(d.size);
             });
 
-    svgMap.selectAll('text')
-            .data(realQuakes)
+      svgMap.selectAll('text')
+            .data(quakes)
             .enter()
             .append('text')
             .text(function(d){
@@ -145,9 +195,11 @@ function renderQuakes(quakes){
             .attr('font-size', '11px')
             .attr('fill', 'red');
 
-    svgMap.append('text')
-        .text('Earthquake latitude & longitude with size')
-        .attr('x', 20)
-        .attr('y', 100);
+      svgMap.append('text')
+            .text('Earthquake latitude & longitude with size')
+            .attr('x', 20)
+            .attr('y', 100);
+  }
 
-}
+  return { bindEventListeners: bindEventListeners }
+})()
