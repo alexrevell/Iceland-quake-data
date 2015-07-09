@@ -3,6 +3,28 @@ var svg;
 var svgHeight = 300;
 var svgWidth = 500;
 var barPadding = 1;
+
+/* map code */
+var mapwidth = 500,
+    mapheight = 250;
+
+var path = d3.geo.path()
+    .projection(d3.geo.mercator());
+
+var mapsvg = d3.select("#map-canvas").append("svg")
+    .attr("width", mapwidth)
+    .attr("height", mapheight);
+
+d3.json("data/icelandBoundaries.json", function(error, isl) {
+  if (error) return console.error(error);
+
+  console.log(isl);
+  mapsvg.append("path")
+      .datum(topojson.mesh(isl))
+      .attr("d", path);
+});
+
+
 (function(){
   var quakesURL = "http://apis.is/earthquake/is";
   getAndExtractQuakesEventHandler(quakesURL, getQuakes, extractQuakes, renderQuakes);
