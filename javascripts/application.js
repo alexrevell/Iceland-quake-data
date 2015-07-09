@@ -8,8 +8,13 @@ var barPadding = 1;
 var mapwidth = 500,
     mapheight = 250;
 
+var projection = d3.geo.mercator()
+    .center([-19, 65])
+    .scale(1500)
+    .translate([mapwidth / 2, mapheight / 2]);
+
 var path = d3.geo.path()
-    .projection(d3.geo.mercator());
+    .projection(projection);
 
 var mapsvg = d3.select("#map-canvas").append("svg")
     .attr("width", mapwidth)
