@@ -19,3 +19,15 @@ div.bar {
   height: 100;
   width: 500;
 }*/
+
+/* map code */
+path {
+  fill: none;
+  stroke: #bbb;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.land {
+  fill: #ddd;
+}

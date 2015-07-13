@@ -26,6 +26,7 @@ d3.json("data/icelandBoundaries.json", function(error, isl) {
   console.log(isl);
   mapsvg.append("path")
       .datum(topojson.mesh(isl))
+      .attr("class", "land")
       .attr("d", path);
 });
 
