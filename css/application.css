@@ -21,6 +21,11 @@ div.bar {
 }*/
 
 /* map code */
+.map {
+  display: block;
+  margin: auto;
+}
+
 path {
   fill: none;
   stroke: #bbb;

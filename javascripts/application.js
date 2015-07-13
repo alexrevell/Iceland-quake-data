@@ -6,29 +6,20 @@ var barPadding = 1;
 
 /* map code */
 var mapwidth = 500,
-    mapheight = 250;
+    mapheight = 350;
 
 var projection = d3.geo.mercator()
     .center([-19, 65])
-    .scale(1500)
+    .scale(2000)
     .translate([mapwidth / 2, mapheight / 2]);
 
 var path = d3.geo.path()
     .projection(projection);
 
 var mapsvg = d3.select("#map-canvas").append("svg")
+    .attr("class", "map")
     .attr("width", mapwidth)
     .attr("height", mapheight);
-
-d3.json("data/icelandBoundaries.json", function(error, isl) {
-  if (error) return console.error(error);
-
-  console.log(isl);
-  mapsvg.append("path")
-      .datum(topojson.mesh(isl))
-      .attr("class", "land")
-      .attr("d", path);
-});
 
 
 (function(){
@@ -55,7 +46,7 @@ function extractQuakes(quakeResults){
 
 function renderQuakes(quakes){
 
-   function getRealQuakes(quake){
+  function getRealQuakes(quake){
     return quake.size > 0;
   }
 
@@ -119,49 +110,91 @@ function renderQuakes(quakes){
         .attr('x', 20)
         .attr('y', 100);
 
-    var svgMap = d3.select('body')
-            .append('svg')
-            .attr('height', svgHeight)
-            .attr('width', svgWidth)
-            .attr('class', 'quake-map-canvas');
+    d3.json("data/icelandBoundaries.json", function(error, isl) {
+      if (error) return console.error(error);
 
-    var xScale = d3.scale.linear()
-                  .domain([d3.min(realQuakes, function(d){return d.longitude;}), d3.max(realQuakes, function(d){return d.longitude;})])
-                  .range([0, svgWidth]);
+      console.log(isl);
 
-    var yScale = d3.scale.linear()
-                  .domain([d3.min(realQuakes, function(d){return d.latitude;}), d3.max(realQuakes, function(d){return d.latitude;})])
-                  .range([0, svgHeight]);
+      mapsvg.append("path")
+          .datum(topojson.mesh(isl))
+          .attr("class", "land")
+          .attr("d", path);
 
-    svgMap.selectAll('circle')
-            .data(realQuakes)
-            .enter()
-            .append('circle')
-            .attr('cx', function(d){
-              return xScale(d.longitude);
-            })
-            .attr('cy', function(d){
-              return yScale(d.latitude);
-            })
-            .attr('r', function(d){
-              return d.size * 10;
-            });
+      mapsvg.selectAll('circle')
+              .data(realQuakes)
+                .enter()
+              .append('circle')
+              .attr('cx', function(d){
+                return projection([d.longitude, d.latitude])[0];
+              })
+              .attr('cy', function(d){
+                return projection([d.longitude, d.latitude])[1];
+              })
+              .attr('r', function(d){
+                return d.size * 10;
+              });
 
-    svgMap.selectAll('text')
-            .data(realQuakes)
-            .enter()
-            .append('text')
-            .text(function(d){
-              return d.longitude + ", " + d.latitude;
-            })
-            .attr('x', function(d){
-              return xScale(d.longitude);
-            })
-            .attr('y', function(d){
-              return yScale(d.latitude);
-            })
-            .attr('font-family', 'sans-serif')
-            .attr('font-size', '11px')
-            .attr('fill', 'red');
+      mapsvg.selectAll('text')
+              .data(realQuakes)
+                .enter()
+              .append('text')
+              .text(function(d){
+                return d.longitude + ", " + d.latitude;
+              })
+              .attr('x', function(d){
+                return projection([d.longitude, d.latitude])[0];
+              })
+              .attr('y', function(d){
+                return projection([d.longitude, d.latitude])[1];
+              })
+              .attr('font-family', 'sans-serif')
+              .attr('font-size', '11px')
+              .attr('fill', 'red');
+    });
+
+    // var svgMap = d3.select('body')
+    //         .append('svg')
+    //         .attr('height', svgHeight)
+    //         .attr('width', svgWidth)
+    //         .attr('class', 'quake-map-canvas');
+    //
+    // var xScale = d3.scale.linear()
+    //               .domain([d3.min(realQuakes, function(d){return d.longitude;}), d3.max(realQuakes, function(d){return d.longitude;})])
+    //               .range([0, svgWidth]);
+    //
+    // var yScale = d3.scale.linear()
+    //               .domain([d3.min(realQuakes, function(d){return d.latitude;}), d3.max(realQuakes, function(d){return d.latitude;})])
+    //               .range([0, svgHeight]);
+    //
+    // svgMap.selectAll('circle')
+    //         .data(realQuakes)
+    //         .enter()
+    //         .append('circle')
+    //         .attr('cx', function(d){
+    //           return xScale(d.longitude);
+    //         })
+    //         .attr('cy', function(d){
+    //           return yScale(d.latitude);
+    //         })
+    //         .attr('r', function(d){
+    //           return d.size * 10;
+    //         });
+    //
+    // svgMap.selectAll('text')
+    //         .data(realQuakes)
+    //         .enter()
+    //         .append('text')
+    //         .text(function(d){
+    //           return d.longitude + ", " + d.latitude;
+    //         })
+    //         .attr('x', function(d){
+    //           return xScale(d.longitude);
+    //         })
+    //         .attr('y', function(d){
+    //           return yScale(d.latitude);
+    //         })
+    //         .attr('font-family', 'sans-serif')
+    //         .attr('font-size', '11px')
+    //         .attr('fill', 'red');
 
 }
