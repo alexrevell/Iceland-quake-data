@@ -4,7 +4,7 @@ var svgHeight = 300;
 var svgWidth = 500;
 var barPadding = 1;
 
-/* map code */
+/* map initialising code */
 var mapwidth = 500,
     mapheight = 350;
 
@@ -20,6 +20,7 @@ var mapsvg = d3.select("#map-canvas").append("svg")
     .attr("class", "map")
     .attr("width", mapwidth)
     .attr("height", mapheight);
+/* */
 
 
 (function(){
