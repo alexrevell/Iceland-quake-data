@@ -54,11 +54,10 @@ var IcelandQuakes = (function(){
 
   function updateQuakesDisplay(quakes) {
     console.log("new quakes have happened ! current:", currentQuakes, "new quakes: ", quakes)
+    quakesDiv.remove()
     svg.remove()
     svgMap.remove()
-    renderLargeGraph(quakes)
-    renderSmallGraph(quakes)
-    renderQuakesMap(quakes)
+    renderQuakes(quakes)
     return quakes
   }
 
@@ -93,9 +92,7 @@ var IcelandQuakes = (function(){
       .append('div')
       .attr('class', 'bar')
       .style("background-color","red")
-      .style('height', function(d){
-        return (d.size * 30) + 'px'
-      })
+      .style('height', function(d){ return (d.size * 30) + 'px' })
       .style('width', '10px')
   }
 
@@ -110,33 +107,21 @@ var IcelandQuakes = (function(){
         .data(quakes)
         .enter()
         .append('rect')
-        .attr('x', function(d, i){
-          return i * svgWidth / quakes.length
-        })
-        .attr('y', function(d){
-          return svgHeight - d.size * 80
-        })
-        .attr('height', function(d){
-          return d.size * 80
-        })
+        .attr('x', function(d, i){ return i * svgWidth / quakes.length })
+        .attr('y', function(d){ return svgHeight - d.size * 80 })
+        .attr('height', function(d){ return d.size * 80 })
         .attr('width', svgWidth / quakes.length - barPadding)
-        .attr('fill', function(d){
-          return "rgb("+ (d.size * 120) +",0,0)"
-        })
+        .attr('fill', function(d){ return "rgb("+ (d.size * 120) +",0,0)" })
 
     svg.selectAll('text')
        .data(quakes)
        .enter()
        .append('text')
-       .text(function(d, i){
-          return d.size
-        })
+       .text(function(d, i){ return d.size })
        .attr('x', function(d, i){
           return i * (svgWidth / quakes.length) + (svgWidth / quakes.length - barPadding) / 2
         })
-       .attr('y', function(d, i){
-          return svgHeight - d.size * 80 + 10
-        })
+       .attr('y', function(d, i){ return svgHeight - d.size * 80 + 10 })
        .attr('text-anchor', 'middle')
        .attr('font-family', 'sans-serif')
        .attr('font-size', '10px')
@@ -148,6 +133,24 @@ var IcelandQuakes = (function(){
        .attr('y', 100)
   }
 
+  function buildXScale(data, width, padding) {
+    return d3.scale.linear()
+      .domain([
+        d3.min(data, function(d){ return d.longitude }),
+        d3.max(data, function(d){ return d.longitude })
+      ])
+      .range([padding, width - padding * 4])
+  }
+
+  function buildYScale(data, height, padding) {
+    return d3.scale.linear()
+      .domain([
+        d3.min(data, function(d){ return d.latitude }),
+        d3.max(data, function(d){ return d.latitude })
+      ])
+     .range([height - padding, padding])
+  }
+
   function renderQuakesMap(quakes){
 
     svgMap = d3.select('.container-quakes')
@@ -156,61 +159,31 @@ var IcelandQuakes = (function(){
                .attr('width', svgWidth)
                .attr('class', 'quake-map-canvas')
 
-    var xScale = d3.scale.linear()
-                   .domain([d3.min(quakes, function(d){
-                      return d.longitude
-                    }), d3.max(quakes, function(d){
-                      return d.longitude
-                    })])
-                   .range([scatterPadding, svgWidth - scatterPadding * 4])
-
-    var yScale = d3.scale.linear()
-                   .domain([d3.min(quakes, function(d){
-                      return d.latitude
-                    }), d3.max(quakes, function(d){
-                      return d.latitude
-                    })])
-                   .range([svgHeight - scatterPadding, scatterPadding])
-
-    var rScale = d3.scale.linear()
-                   .domain([0, d3.max(quakes, function(d){
-                      return d.size
-                    })])
-                   .range([0, 10])
+    var xScale = buildXScale(quakes, svgWidth, scatterPadding)
+    var yScale = buildYScale(quakes, svgHeight, scatterPadding)
+    var rScale = d3.scale.linear().domain([0, d3.max(quakes, function(d){ return d.size })]).range([0, 10])
 
     svgMap.selectAll('circle')
           .data(quakes)
           .enter()
           .append('circle')
-          .attr('cx', function(d){
-            return xScale(d.longitude)
-          })
-          .attr('cy', function(d){
-            return yScale(d.latitude)
-          })
-          .attr('r', function(d){
-            return rScale(d.size)
-          });
+          .attr('cx', function(d){ return xScale(d.longitude) })
+          .attr('cy', function(d){ return yScale(d.latitude) })
+          .attr('r', function(d){ return rScale(d.size) })
+          .attr('fill', function (d){ return "rgb("+ (d.size * 120) +",0,0)" })
 
     svgMap.selectAll('text')
           .data(quakes)
           .enter()
           .append('text')
-          .text(function(d){
-            return d.longitude + ", " + d.latitude
-          })
-          .attr('x', function(d){
-            return xScale(d.longitude)
-          })
-          .attr('y', function(d){
-            return yScale(d.latitude)
-          })
+          .text(function(d){ return d.longitude + ", " + d.latitude })
+          .attr('x', function(d){ return xScale(d.longitude) })
+          .attr('y', function(d){ return yScale(d.latitude) })
           .attr('font-family', 'sans-serif')
           .attr('font-size', '11px')
-          .attr('fill', 'red')
 
     svgMap.append('text')
-          .text('Earthquake latitude & longitude with size')
+          .text('Earthquake size by latitude & longitude')
           .attr('x', 20)
           .attr('y', 100)
   }
