@@ -8,7 +8,7 @@ var IcelandQuakes = (function(){
   var scatterPadding = 20
   var currentQuakes
   var latestQuakes
-  var quakesURL = "http://apis.is/earthquake/is"
+  var quakesURL = "https://apis.is/earthquake/is"
 
   var bindEventListeners = function () {
     getInitialQuakes(quakesURL)
