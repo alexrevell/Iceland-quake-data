@@ -1,0 +1,44 @@
+{
+  "name": "iceland-quakes",
+  "version": "1.0.0",
+  "description": "Visualisation app for earthquakes in Iceland",
+  "main": "./server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node server.js",
+    "build-dev": "babel lib -d dist",
+    "build": "browserify ./lib/application.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify",
+    "watch": "watchify ./lib/application.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
+    "clean": "rm -rf dist && mkdir dist",
+    "release": "npm run clean && npm run build",
+    "deploy": "npm run release && git add -A . && git commit -m \"Release at $(date)\" && git push origin gh-pages --force && git checkout master"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexrevell/iceland-quakes.git"
+  },
+  "keywords": [
+    "earthquakes"
+  ],
+  "author": "Alex Revell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alexrevell/iceland-quakes/issues"
+  },
+  "homepage": "https://alexrevell.github.io/iceland-quakes",
+  "devDependencies": {
+    "babel-cli": "^6.4.0",
+    "babel-core": "^6.4.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babelify": "^7.2.0",
+    "browserify": "^13.0.0",
+    "nodemon": "^1.8.1",
+    "uglifyify": "^3.0.4",
+    "watchify": "^3.7.0"
+  },
+  "dependencies": {
+    "d3": "^3.5.12",
+    "express": "^4.13.4",
+    "uglify-js": "^2.8.3"
+  }
+}
