@@ -8,7 +8,7 @@
     "start": "babel-node server.js",
     "build-dev": "babel lib -d dist",
     "build": "browserify ./lib/application.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify",
-    "watch": "watchify ./lib/application.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
+    "watch": "watchify ./lib/*.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
     "clean": "rm -rf dist && mkdir dist",
     "release": "npm run clean && npm run build",
     "deploy": "npm run release && git add -A . && git commit -m \"Release at $(date)\" && git push origin gh-pages --force && git checkout master"
@@ -39,6 +39,7 @@
   "dependencies": {
     "d3": "^3.5.12",
     "express": "^4.13.4",
+    "topojson": "^1.6.27",
     "uglify-js": "^2.8.3"
   }
 }

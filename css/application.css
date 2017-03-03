@@ -20,6 +20,23 @@ div.bar {
   background-color: teal;
 }
 
+.subunit.ISL { fill: #dcd; }
+
+.subunit-boundary {
+  fill: none;
+  stroke: #777;
+  stroke-dasharray: 2,2;
+  stroke-linejoin: round;
+}
+
+.subunit-label {
+  fill: #777;
+  fill-opacity: .5;
+  font-size: 20px;
+  font-weight: 300;
+  text-anchor: middle;
+}
+
 /*svg .quake-map-canvas {
   height: 100;
   width: 500;
