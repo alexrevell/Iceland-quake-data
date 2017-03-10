@@ -1,23 +1,20 @@
-/*html { height: 100% }*/
-/*body { height: 100%; margin: 0; padding: 0 }*/
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-#map-canvas {
-  height: 100%;
-  width: 100%;
-  display: block;
-}
+.fade-in {
+	opacity: 0;
+	-webkit-animation: fadeIn ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+	-moz-animation: fadeIn ease-in 1;
+	animation: fadeIn ease-in 1;
 
-.container {
-  height: 100%;
-  background-color: #CCCCCC;
-}
+	-webkit-animation-fill-mode: forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+	-moz-animation-fill-mode: forwards;
+	animation-fill-mode: forwards;
 
-div.bar {
-  display: inline-block;
-  height: 75px;
-  width: 20px;
-  margin-right: 1px;
-  background-color: teal;
+	-webkit-animation-duration: 4s;
+	-moz-animation-duration: 4s;
+	animation-duration: 4s;
 }
 
 .subunit.ISL { fill: #dcd; }
@@ -37,7 +34,10 @@ div.bar {
   text-anchor: middle;
 }
 
-/*svg .quake-map-canvas {
-  height: 100;
-  width: 500;
-}*/
+.quake-location {
+  &:nth-child(1) {
+    -webkit-animation-delay: 2s;
+    -moz-animation-delay: 2s;
+    animation-delay: 2s;
+  }
+}
