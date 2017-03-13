@@ -1,7 +1,7 @@
 const MAP_DATA = '../geo-data/iceland.json'
 const QUAKES_URL = 'https://apis.is/earthquake/is'
-const HEIGHT = 600
-const WIDTH = 1020
+const WIDTH = document.querySelector('.map-container').offsetWidth
+const HEIGHT = WIDTH * .7
 const SCATTER_PADDING = 20
 
 getJson(MAP_DATA)
@@ -11,7 +11,6 @@ getJson(QUAKES_URL)
   .then(data => data.results)
   .then(quakes => quakes.filter(q => q.size >= 0))
   .then(renderQuakesMap)
-
 
 /*
 **
@@ -27,7 +26,7 @@ const mapSvg = d3.select('.map-container')
 
 const projection = d3.geoOrthographic()
   .center([0, 0])
-  .rotate([21, -65])
+  .rotate([19, -65])
   .scale(8000)
   .translate([WIDTH / 2, HEIGHT / 2])
 
@@ -55,9 +54,9 @@ function renderMap(iceland) {
     .attr('class', 'place-label')
     .attr('transform', d => `translate(${projection(d.geometry.coordinates)})`)
     .attr('dy', '.35em')
-    .text( d => d.properties.name )
     .attr('x', d => d.geometry.coordinates[0] > -22 ? 6 : -6)
     .style('text-anchor', d => d.geometry.coordinates[0] > -22 ? 'start' : 'end')
+    .text( d => d.properties.name )
 
   // Iceland country text
 
@@ -75,6 +74,8 @@ function renderQuakesMap(quakes){
   let yScale = buildYScale(quakes, HEIGHT, SCATTER_PADDING)
   let rScale = d3.scaleLinear([0, d3.max(quakes, d => d.size )]).range([0, 10])
 
+  // quake circles
+
   mapSvg.selectAll('circle')
     .data(quakes)
     .enter()
@@ -84,14 +85,16 @@ function renderQuakesMap(quakes){
     .attr('r', d => rScale(d.size) )
     .attr('fill', d => `rgb(${d.size * 120},0,0)` )
 
+    // quake details
+
   mapSvg.selectAll('text')
     .data(quakes)
     .enter()
     .append('text')
-    .text(d => `${d.longitude}, ${d.latitude}` )
+    .text(d => d.size > .75 ? d.humanReadableLocation : null)
     .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
     .attr('font-family', 'sans-serif')
-    .attr('font-size', '11px')
+    .attr('font-size', '12px')
 }
 
 function getJson(url){
@@ -103,7 +106,7 @@ function buildXScale(data, width, padding) {
     d3.min(data, d => d.longitude ),
     d3.max(data, d => d.longitude )
   ])
-  .range([padding, width - padding * 4])
+  .range([padding, width - padding])
 }
 
 function buildYScale(data, height, padding) {
