@@ -7,11 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node server.js",
     "build-dev": "babel lib -d dist",
-    "build": "browserify ./lib/application.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify",
-    "watch": "watchify ./lib/*.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
-    "clean": "rm -rf dist && mkdir dist",
+    "build-css": "cat ./css/normalize.css >> dist/bundle.css && cat ./css/application.css >> dist/bundle.css",
+    "build": "browserify ./map.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify",
+    "watch": "watchify ./map.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
+    "clean": "rm dist/bundle.js && rm dist/bundle.css",
     "release": "npm run clean && npm run build",
-    "deploy": "npm run release && git add -A . && git commit -m \"Release at $(date)\" && git push origin gh-pages --force && git checkout master"
+    "deploy": "npm run release && git add -A . && git commit -m \"Release at $(date)\" && git subtree push --prefix dist origin gh-pages"
   },
   "repository": {
     "type": "git",

@@ -1,10 +1,10 @@
-const MAP_DATA = '../geo-data/iceland.json'
+const MAP_DATA_FILE = './iceland.json'
 const QUAKES_URL = 'https://apis.is/earthquake/is'
 const WIDTH = document.querySelector('.map-container').offsetWidth
 const HEIGHT = WIDTH * .7
 const SCATTER_PADDING = 20
 
-getJson(MAP_DATA)
+getJson(MAP_DATA_FILE)
   .then(renderMap)
 
 getJson(QUAKES_URL)
