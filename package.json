@@ -8,11 +8,11 @@
     "start": "babel-node server.js",
     "build-dev": "babel lib -d dist",
     "build-css": "cat ./css/normalize.css >> dist/bundle.css && cat ./css/application.css >> dist/bundle.css",
-    "build": "browserify ./map.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify",
+    "build": "browserify ./map.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify && npm run build-css",
     "watch": "watchify ./map.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
-    "clean": "rm dist/bundle.js && rm dist/bundle.css",
+    "clean": "rm dist/bundle.js || true && rm dist/bundle.css || true",
     "release": "npm run clean && npm run build",
-    "deploy": "npm run release && git add -A . && git commit -m \"Release at $(date)\" && git subtree push --prefix dist origin gh-pages"
+    "deploy": "npm run release && git add dist/ && git commit -m \"Release at $(date)\" && git subtree push --prefix dist origin gh-pages"
   },
   "repository": {
     "type": "git",
