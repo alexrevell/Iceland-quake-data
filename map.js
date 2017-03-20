@@ -1,7 +1,7 @@
 const MAP_DATA_FILE = './iceland.json'
 const QUAKES_URL = 'https://apis.is/earthquake/is'
 const WIDTH = document.querySelector('.map-container').offsetWidth
-const HEIGHT = WIDTH * .7
+const HEIGHT = WIDTH * .5
 const SCATTER_PADDING = 20
 
 getJson(MAP_DATA_FILE)
@@ -10,7 +10,11 @@ getJson(MAP_DATA_FILE)
 getJson(QUAKES_URL)
   .then(data => data.results)
   .then(quakes => quakes.filter(q => q.size >= 0))
-  .then(renderQuakesMap)
+  .then(quakes => {
+    console.log('quakes! ', quakes)
+    renderQuakesMap(quakes)
+    renderSmallGraph(quakes)
+  }).catch(err => console.error('Error:', err))
 
 /*
 **
@@ -66,6 +70,8 @@ function renderMap(iceland) {
     .attr('class', d => `subunit-label ${d.id}`)
     .attr('transform', d => `translate(${path.centroid(d)})`)
     .attr('dy', '.35em')
+    .attr('font-family', 'sans-serif')
+    .attr('font-size', '14px')
     .text(d => d.properties.name)
 }
 
@@ -80,10 +86,11 @@ function renderQuakesMap(quakes){
     .data(quakes)
     .enter()
     .append('circle')
-    .attr('class', 'quake-location fade-in')
+    .attr('class', 'quake quake-location fade-in')
+    .attr('id', d => `quake-location-${d.timestamp}`)
     .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
-    .attr('r', d => rScale(d.size) )
-    .attr('fill', d => `rgb(${d.size * 120},0,0)` )
+    .attr('r', d => rScale(d.size))
+    .attr('fill', d => `rgb(${d.size * 120},0,0)`)
 
     // quake details
 
@@ -91,10 +98,25 @@ function renderQuakesMap(quakes){
     .data(quakes)
     .enter()
     .append('text')
-    .text(d => d.size > .75 ? d.humanReadableLocation : null)
+    .text(d => d.size > .75 ? `${d.size}` : null)
     .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
+    .attr('y', '4')
+    .attr('x', '15')
     .attr('font-family', 'sans-serif')
     .attr('font-size', '12px')
+    .attr('fill', d => `rgb(${d.size * 120},0,0)`)
+}
+
+function renderSmallGraph(quakes) {
+  let quakesDiv = d3.select('.quake-events-navigation').selectAll('div')
+    .data(quakes)
+    .enter()
+    .append('div')
+    .attr('class', 'quake quake-bar')
+    .attr('id', d => `quake-bar-${d.timestamp}`)
+    .style('background-color','red')
+    .style('height', d => (d.size * 30) + 'px')
+    .style('width', '10px')
 }
 
 function getJson(url){
