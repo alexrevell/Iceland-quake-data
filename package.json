@@ -5,9 +5,9 @@
   "main": "./server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node server.js",
+    "start": "node server.js",
     "build-dev": "babel lib -d dist",
-    "build-css": "node-sass -o dist/bundle.css ./scss/application.scss",
+    "build-css": "node-sass scss/application.scss dist/bundle.css",
     "build": "browserify ./map.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify && npm run build-css",
     "watch": "watchify ./map.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
     "clean": "rm dist/bundle.js || true && rm dist/bundle.css || true",

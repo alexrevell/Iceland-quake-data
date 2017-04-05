@@ -13,7 +13,7 @@ getJson(QUAKES_URL)
   .then(quakes => {
     console.log('quakes! ', quakes)
     renderQuakesMap(quakes)
-    renderSmallGraph(quakes)
+    // renderSmallGraph(quakes)
   }).catch(err => console.error('Error:', err))
 
 /*

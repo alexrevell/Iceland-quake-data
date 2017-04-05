@@ -1,4 +1,5 @@
-import express from 'express'
+'use strict'
+const express = require('express')
 
 let app = express()
 
