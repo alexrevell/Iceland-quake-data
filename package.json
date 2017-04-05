@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node server.js",
     "build-dev": "babel lib -d dist",
-    "build-css": "cat ./css/normalize.css >> dist/bundle.css && cat ./css/application.css >> dist/bundle.css",
+    "build-css": "node-sass -o dist/bundle.css ./scss/application.scss",
     "build": "browserify ./map.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify && npm run build-css",
     "watch": "watchify ./map.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
     "clean": "rm dist/bundle.js || true && rm dist/bundle.css || true",
@@ -40,6 +40,7 @@
   "dependencies": {
     "d3": "^3.5.12",
     "express": "^4.13.4",
+    "node-sass": "^4.5.2",
     "topojson": "^1.6.27",
     "uglify-js": "^2.8.3"
   }
