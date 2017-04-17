@@ -8,24 +8,34 @@
 @-moz-keyframes fadeOut { from { opacity:1; } to { opacity: 0.25; } }
 @keyframes fadeOut { from { opacity:1; } to { opacity: 0.25; } }
 
+
+.sub-title {
+  font-size: .7em;
+  opacity: .5;
+}
+
+.quake-events-navigation {
+  text-align: center;
+}
+
 .map-container {
   width: 80%;
   margin: 0 auto;
 }
 
 .fade-in {
-	opacity: 0;
-	-webkit-animation: fadeIn ease-in-out 1;
-	-moz-animation: fadeIn ease-in-out 1;
-	animation: fadeIn ease-in-out 1;
-
-	-webkit-animation-fill-mode: forwards;
-	-moz-animation-fill-mode: forwards;
-	animation-fill-mode: forwards;
-
-	-webkit-animation-duration: 4s;
-	-moz-animation-duration: 4s;
-	animation-duration: 4s;
+	// opacity: 0;
+	// -webkit-animation: fadeIn ease-in-out 1;
+	// -moz-animation: fadeIn ease-in-out 1;
+	// animation: fadeIn ease-in-out 1;
+  //
+	// -webkit-animation-fill-mode: forwards;
+	// -moz-animation-fill-mode: forwards;
+	// animation-fill-mode: forwards;
+  //
+	// -webkit-animation-duration: 4s;
+	// -moz-animation-duration: 4s;
+	// animation-duration: 4s;
 }
 
 .subunit.ISL { fill: #dcd; }
@@ -50,14 +60,13 @@
 }
 
 .quake-location {
-  &:hover {
-    -webkit-animation: fadeOut ease-in-out 1;
-    -moz-animation: fadeOut ease-in-out 1;
-    animation: fadeOut ease-in-out 1;
-
-    -webkit-animation-delay: 2s;
-    -moz-animation-delay: 2s;
-    animation-delay: 2s;
-  }
-
+  // &:hover {
+  //   -webkit-animation: fadeOut ease-in-out 1;
+  //   -moz-animation: fadeOut ease-in-out 1;
+  //   animation: fadeOut ease-in-out 1;
+  //
+  //   -webkit-animation-delay: 2s;
+  //   -moz-animation-delay: 2s;
+  //   animation-delay: 2s;
+  // }
 }

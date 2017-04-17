@@ -6,12 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "build-dev": "babel lib -d dist",
-    "build-css": "node-sass scss/application.scss dist/bundle.css",
-    "build": "browserify ./map.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify && npm run build-css",
-    "watch": "watchify ./map.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
+    "build-js": "browserify map.js -o dist/bundle.js -d -t [ babelify --presets [es2015] ]",
+    "build-css": "node-sass --include-path scss scss/application.scss ./dist/bundle.css",
+    "build-dev": "npm run build-js & npm run build-css",
+    "build-prod": "browserify ./map.js > ./dist/bundle.js -d -t [ babelify --presets [es2015] ] -t uglifyify && npm run build-css",
+    "watch-js": "watchify ./map.js -o ./dist/bundle.js -d -t [ babelify --presets [es2015] ]",
+    "watch-css": "node-sass -w --include-path scss scss/application.scss ./dist/bundle.css",
+    "watch": "npm run watch-css & npm run watch-js",
     "clean": "rm dist/bundle.js || true && rm dist/bundle.css || true",
-    "release": "npm run clean && npm run build",
+    "release": "npm run clean && npm run build-prod",
     "deploy": "npm run release && git add dist/ && git commit -m \"Release at $(date)\" && git subtree push --prefix dist origin gh-pages"
   },
   "repository": {

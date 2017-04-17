@@ -13,7 +13,7 @@ getJson(QUAKES_URL)
   .then(quakes => {
     console.log('quakes! ', quakes)
     renderQuakesMap(quakes)
-    // renderSmallGraph(quakes)
+    renderSmallGraph(quakes)
   }).catch(err => console.error('Error:', err))
 
 /*
@@ -91,6 +91,19 @@ function renderQuakesMap(quakes){
     .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
     .attr('r', d => rScale(d.size))
     .attr('fill', d => `rgb(${d.size * 120},0,0)`)
+    .on('mouseover', (d, i) => {
+      d3.selectAll('.quake-bar')
+        .filter((d, j) => j !== i)
+        .style('opacity', .1)
+    })
+    .on('mouseout', (d, i) => {
+      d3.selectAll('.quake-bar')
+      .filter((d, j) => j !== i)
+      .style('opacity', 1)
+    })
+    .transition()
+    .delay((d, i) => i * 1000)
+    .ease(d3.easeLinear)
 
     // quake details
 
@@ -98,7 +111,7 @@ function renderQuakesMap(quakes){
     .data(quakes)
     .enter()
     .append('text')
-    .text(d => d.size > .75 ? `${d.size}` : null)
+    .text(d => d.size)
     .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
     .attr('y', '4')
     .attr('x', '15')
@@ -115,8 +128,19 @@ function renderSmallGraph(quakes) {
     .attr('class', 'quake quake-bar')
     .attr('id', d => `quake-bar-${d.timestamp}`)
     .style('background-color','red')
-    .style('height', d => (d.size * 30) + 'px')
-    .style('width', '10px')
+    .style('height', d => (d.size * 40) + 'px')
+    .style('width', (d, i) => WIDTH / quakes.length + 'px')
+    .on('mouseover', (d, i) => {
+      d3.selectAll('.quake-location')
+        .filter((d, j) => j !== i)
+        .style('opacity', .1)
+    })
+    .on('mouseout', (d, i) => {
+      d3.selectAll('.quake-location')
+      .filter((d, j) => j !== i)
+      .style('opacity', 1)
+    })
+
 }
 
 function getJson(url){
