@@ -3,6 +3,7 @@ const QUAKES_URL = 'https://apis.is/earthquake/is'
 const WIDTH = document.querySelector('.map-container').offsetWidth
 const HEIGHT = WIDTH * .5
 const SCATTER_PADDING = 20
+const BAR_PADDING = 1
 
 getJson(MAP_DATA_FILE)
   .then(renderMap)
@@ -13,7 +14,8 @@ getJson(QUAKES_URL)
   .then(quakes => {
     console.log('quakes! ', quakes)
     renderQuakesMap(quakes)
-    renderSmallGraph(quakes)
+    renderLargeGraph(quakes, 100, 400, BAR_PADDING)
+    // renderSmallGraph(quakes)
   }).catch(err => console.error('Error:', err))
 
 /*
@@ -88,22 +90,26 @@ function renderQuakesMap(quakes){
     .append('circle')
     .attr('class', 'quake quake-location fade-in')
     .attr('id', d => `quake-location-${d.timestamp}`)
-    .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
-    .attr('r', d => rScale(d.size))
     .attr('fill', d => `rgb(${d.size * 120},0,0)`)
+    .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
     .on('mouseover', (d, i) => {
       d3.selectAll('.quake-bar')
-        .filter((d, j) => j !== i)
-        .style('opacity', .1)
+      .filter((d, j) => j !== i)
+      .transition()
+      .style('opacity', .1)
     })
     .on('mouseout', (d, i) => {
       d3.selectAll('.quake-bar')
       .filter((d, j) => j !== i)
+      .transition()
       .style('opacity', 1)
     })
+
     .transition()
-    .delay((d, i) => i * 1000)
-    .ease(d3.easeLinear)
+    .delay((d, i) => i * 400)
+    .duration(350)
+    .attr('r', d => rScale(d.size))
+
 
     // quake details
 
@@ -127,20 +133,73 @@ function renderSmallGraph(quakes) {
     .append('div')
     .attr('class', 'quake quake-bar')
     .attr('id', d => `quake-bar-${d.timestamp}`)
-    .style('background-color','red')
+    .attr('background-color', d => `rgb(${d.size * 120},0,0)`)
     .style('height', d => (d.size * 40) + 'px')
     .style('width', (d, i) => WIDTH / quakes.length + 'px')
     .on('mouseover', (d, i) => {
       d3.selectAll('.quake-location')
         .filter((d, j) => j !== i)
+        .transition()
         .style('opacity', .1)
     })
     .on('mouseout', (d, i) => {
       d3.selectAll('.quake-location')
       .filter((d, j) => j !== i)
+      .transition()
       .style('opacity', 1)
     })
+}
 
+function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
+  let svg = d3.select('.container-quakes')
+          .append('svg')
+          .attr('height', svgHeight)
+          .attr('width', '100%')
+          .attr('class', 'quake-canvas')
+
+  svg.selectAll('rect')
+      .data(quakes)
+      .enter()
+      .append('rect')
+      .attr('class', 'quake quake-bar')
+      .attr('x', (d, i) => i * WIDTH / quakes.length )
+      .attr('y', d => svgHeight - d.size * 40 )
+      .attr('height', d => d.size * 40 )
+      .attr('width', (d, i) => WIDTH / quakes.length + 'px')
+      // .attr('height', d => (d.size * 40))
+      // .attr('width', (d, i) => svgWidth / quakes.length)
+
+      // .attr('width', svgWidth / quakes.length - barPadding)
+      .attr('fill', d => `rgb(${d.size * 120},0,0)` )
+      .on('mouseover', (d, i) => {
+        d3.selectAll('.quake-location')
+          .filter((d, j) => j !== i)
+          .transition()
+          .style('opacity', .1)
+      })
+      .on('mouseout', (d, i) => {
+        d3.selectAll('.quake-location')
+        .filter((d, j) => j !== i)
+        .transition()
+        .style('opacity', 1)
+      })
+
+  // svg.selectAll('text')
+  //    .data(quakes)
+  //    .enter()
+  //    .append('text')
+  //    .text((d, i) => d.size)
+  //    .attr('x', (d, i) => i * (svgWidth / quakes.length) + (svgWidth / quakes.length - barPadding) / 2 )
+  //    .attr('y', (d, i) => svgHeight - d.size * 80 + 10 )
+  //    .attr('text-anchor', 'middle')
+  //    .attr('font-family', 'sans-serif')
+  //    .attr('font-size', '10px')
+  //    .attr('fill', 'white')
+
+  svg.append('text')
+     .text('Earthquakes by size over last 48 hours')
+     .attr('x', 20)
+     .attr('y', 200)
 }
 
 function getJson(url){
