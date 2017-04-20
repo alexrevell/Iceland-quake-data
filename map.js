@@ -14,7 +14,7 @@ getJson(QUAKES_URL)
   .then(quakes => {
     console.log('quakes! ', quakes)
     renderQuakesMap(quakes)
-    renderLargeGraph(quakes, 100, 400, BAR_PADDING)
+    renderLargeGraph(quakes, 200, 400, BAR_PADDING)
     // renderSmallGraph(quakes)
   }).catch(err => console.error('Error:', err))
 
@@ -93,21 +93,14 @@ function renderQuakesMap(quakes){
     .attr('fill', d => `rgb(${d.size * 120},0,0)`)
     .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
     .on('mouseover', (d, i) => {
-      d3.selectAll('.quake-bar')
-      .filter((d, j) => j !== i)
-      .transition()
-      .style('opacity', .1)
+      fadeOpacity(d3.selectAll('.quake-bar').filter((d, j) => j !== i), .1)
     })
     .on('mouseout', (d, i) => {
-      d3.selectAll('.quake-bar')
-      .filter((d, j) => j !== i)
-      .transition()
-      .style('opacity', 1)
+      fadeOpacity(d3.selectAll('.quake-bar').filter((d, j) => j !== i), 1)
     })
-
     .transition()
-    .delay((d, i) => i * 400)
-    .duration(350)
+    .delay((d, i) => i * 450)
+    .duration(4500)
     .attr('r', d => rScale(d.size))
 
 
@@ -134,20 +127,17 @@ function renderSmallGraph(quakes) {
     .attr('class', 'quake quake-bar')
     .attr('id', d => `quake-bar-${d.timestamp}`)
     .attr('background-color', d => `rgb(${d.size * 120},0,0)`)
-    .style('height', d => (d.size * 40) + 'px')
     .style('width', (d, i) => WIDTH / quakes.length + 'px')
     .on('mouseover', (d, i) => {
-      d3.selectAll('.quake-location')
-        .filter((d, j) => j !== i)
-        .transition()
-        .style('opacity', .1)
+      fadeOpacity(d3.selectAll('.quake-location').filter((d, j) => j !== i), .1)
     })
     .on('mouseout', (d, i) => {
-      d3.selectAll('.quake-location')
-      .filter((d, j) => j !== i)
-      .transition()
-      .style('opacity', 1)
+      fadeOpacity(d3.selectAll('.quake-location').filter((d, j) => j !== i), 1)
     })
+    .transition()
+    .delay((d, i) => i * 450)
+    .duration(4500)
+    .style('height', d => (d.size * 40) + 'px')
 }
 
 function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
@@ -161,10 +151,9 @@ function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
       .data(quakes)
       .enter()
       .append('rect')
-      .attr('class', 'quake quake-bar')
+      .attr('class', 'quake quake-bar fade-in')
       .attr('x', (d, i) => i * WIDTH / quakes.length )
       .attr('y', d => svgHeight - d.size * 40 )
-      .attr('height', d => d.size * 40 )
       .attr('width', (d, i) => WIDTH / quakes.length + 'px')
       // .attr('height', d => (d.size * 40))
       // .attr('width', (d, i) => svgWidth / quakes.length)
@@ -172,17 +161,15 @@ function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
       // .attr('width', svgWidth / quakes.length - barPadding)
       .attr('fill', d => `rgb(${d.size * 120},0,0)` )
       .on('mouseover', (d, i) => {
-        d3.selectAll('.quake-location')
-          .filter((d, j) => j !== i)
-          .transition()
-          .style('opacity', .1)
+        fadeOpacity(d3.selectAll('.quake-location').filter((d, j) => j !== i), .1)
       })
       .on('mouseout', (d, i) => {
-        d3.selectAll('.quake-location')
-        .filter((d, j) => j !== i)
-        .transition()
-        .style('opacity', 1)
+        fadeOpacity(d3.selectAll('.quake-location').filter((d, j) => j !== i), 1)
       })
+      .transition()
+      .delay((d, i) => i * 450)
+      .duration(4500)
+      .attr('height', d => d.size * 40 )
 
   // svg.selectAll('text')
   //    .data(quakes)
@@ -200,6 +187,12 @@ function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
      .text('Earthquakes by size over last 48 hours')
      .attr('x', 20)
      .attr('y', 200)
+}
+
+function fadeOpacity(node, value) {
+  node
+    .transition()
+    .style('opacity', value)
 }
 
 function getJson(url){
