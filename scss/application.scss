@@ -8,12 +8,6 @@
 @-moz-keyframes fadeOut { from { opacity:1; } to { opacity: 0.25; } }
 @keyframes fadeOut { from { opacity:1; } to { opacity: 0.25; } }
 
-
-.sub-title {
-  font-size: .7em;
-  opacity: .5;
-}
-
 .quake-events-navigation {
   text-align: center;
 }
@@ -69,4 +63,13 @@
   //   -moz-animation-delay: 2s;
   //   animation-delay: 2s;
   // }
+}
+
+svg {
+  filter: none;
+  transition: filter 500ms;
+
+  &.shadow {
+    filter: drop-shadow( -2px -2px 5px #030 );
+  }
 }
