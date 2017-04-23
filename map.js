@@ -5,8 +5,6 @@ const HEIGHT = WIDTH * .5
 const SCATTER_PADDING = 20
 const BAR_PADDING = 1
 
-// document.addEventListener('DOMContentLoaded', function start(){
-//   return Promise.resolve().then(() => {
 getJson(MAP_DATA_FILE)
   .then(renderMap)
 
@@ -15,11 +13,8 @@ getJson(QUAKES_URL)
   .then(quakes => quakes.filter(q => q.size >= 0))
   .then(quakes => {
     renderQuakesMap(quakes)
-    renderLargeGraph(quakes, 150, 400, BAR_PADDING)
-    // renderSmallGraph(quakes)
+    renderLargeGraph({ quakes, width: WIDTH, height: 120, padding: BAR_PADDING })
   }).catch(err => console.error('Error:', err))
-//   })
-// })
 
 /*
 **
@@ -30,7 +25,13 @@ getJson(QUAKES_URL)
 const mapSvg = d3.select('.map-container')
   .append('svg')
   .attr('class', 'map-svg')
-  .attr('width', '100%')
+  .attr('width', WIDTH)
+  .attr('height', HEIGHT)
+
+const quakesSvg = d3.select('.container-quakes')
+  .append('svg')
+  .attr('class','quakes-svg')
+  .attr('width', WIDTH)
   .attr('height', HEIGHT)
 
 const projection = d3.geoOrthographic()
@@ -88,9 +89,7 @@ function renderQuakesMap(quakes){
 
   // quake circles
 
-  const quakeSpots = mapSvg.append('svg')
-
-  quakeSpots.selectAll('circle')
+  quakesSvg.selectAll('circle')
     .data(quakes)
     .enter()
     .append('circle')
@@ -117,49 +116,30 @@ function renderQuakesMap(quakes){
 
 }
 
-// function renderSmallGraph(quakes) {
-//   let quakesDiv = d3.select('.quake-events-navigation').selectAll('div')
-//     .data(quakes)
-//     .enter()
-//     .append('div')
-//     .attr('class', 'quake quake-bar')
-//     .attr('id', d => `quake-bar-${d.timestamp}`)
-//     .attr('background-color', d => `rgb(${d.size * 120},0,0)`)
-//     .style('width', (d, i) => WIDTH / quakes.length + 'px')
-//     .on('mouseover', (d, i) => {
-//       fadeOpacity(d3.selectAll('.quake-location').filter((d, j) => j !== i), .1)
-//       mapSvg.classed('shadow', true)
-//     })
-//     .on('mouseout', (d, i) => {
-//       fadeOpacity(d3.selectAll('.quake-location').filter((d, j) => j !== i), 1)
-//       mapSvg.classed('shadow', false)
-//     })
-//     .transition()
-//     .delay((d, i) => i * 450)
-//     .duration(2000)
-//     .style('height', d => (d.size * 40) + 'px')
-// }
-
-function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
-  let svg = d3.select('.container-quakes')
+function renderLargeGraph ({ quakes, height, width, padding }) {
+  let barGraphSvg = d3.select('.quake-events-navigation')
           .append('svg')
-          .attr('height', svgHeight)
-          .attr('width', '100%')
-          .attr('class', 'quake-canvas')
+          .attr('height', height)
+          .attr('width', width)
+          .attr('class', 'quakes-bar-graph')
 
-  const rects = svg.selectAll('rect')
+  const rects = barGraphSvg.selectAll('rect')
       .data(quakes)
       .enter()
       .append('rect')
       .attr('class', 'quake quake-bar fade-in')
-      .attr('x', (d, i) => i * WIDTH / quakes.length )
-      .attr('y', d => svgHeight - d.size * 40 )
-      .attr('width', (d, i) => WIDTH / quakes.length + 'px')
-      // .attr('height', d => (d.size * 40))
-      // .attr('width', (d, i) => svgWidth / quakes.length)
-
-      // .attr('width', svgWidth / quakes.length - barPadding)
+      .attr('x', (d, i) => i * WIDTH / quakes.length)
+      .attr('y', d => height - d.size * 40 )
+      .attr('width', width / quakes.length)
+      .call(selection => transitionAttr({ // transition the height for 'growing' effect
+        selection,
+        attr: 'height',
+        value: d => d.size * 40,
+        delay: (d, i) => i * 450,
+        duration: d => 2000
+      }))
       .attr('fill', d => `rgb(${d.size * 120},0,0)` )
+
       .on('mouseover', (d, i) => {
         d3.selectAll('.quake-location').filter((d, j) => j !== i).call(fadeOpacity, .1)
         mapSvg.classed('shadow', true)
@@ -168,13 +148,6 @@ function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
         d3.selectAll('.quake-location').filter((d, j) => j !== i).call(fadeOpacity, 1)
         mapSvg.classed('shadow', false)
       })
-      .call(selection => transitionAttr({
-        selection,
-        attr: 'height',
-        value: d => d.size * 40,
-        delay: (d, i) => i * 450,
-        duration: d => 2000
-      }))
       .append('title')
         .text(d => `Size ${d.size} occured at ${d.timestamp} ${d.humanReadableLocation}`)
 
@@ -183,8 +156,8 @@ function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
   //    .enter()
   //    .append('text')
   //    .text((d, i) => d.size)
-  //    .attr('x', (d, i) => i * (svgWidth / quakes.length) + (svgWidth / quakes.length - barPadding) / 2 )
-  //    .attr('y', (d, i) => svgHeight - d.size * 80 + 10 )
+  //    .attr('x', (d, i) => i * (width / quakes.length) + (width / quakes.length - barPadding) / 2 )
+  //    .attr('y', (d, i) => height - d.size * 80 + 10 )
   //    .attr('text-anchor', 'middle')
   //    .attr('font-family', 'sans-serif')
   //    .attr('font-size', '10px')
@@ -192,12 +165,12 @@ function renderLargeGraph (quakes, svgHeight, svgWidth, barPadding) {
 
 }
 
-function transitionAttr({ selection, attr, value, delay, duration }) {
+function transitionAttr({ selection, attr, value, delay=450, duration=450 }) {
   selection
     .transition()
-    .delay((d,i) => delay(d,i))
-    .duration((d, i) => duration(d,i))
-    .attr(attr, d => value(d))
+    .delay(typeof delay === 'function' ? (d,i) => delay(d,i) : delay)
+    .duration(typeof duration === 'function' ? (d, i) => duration(d,i) : duration)
+    .attr(attr, typeof value === 'function' ? (d) => value(d) : value)
 }
 
 function fadeOpacity(selection, value) {
