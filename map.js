@@ -2,9 +2,6 @@ const MAP_DATA_FILE = './iceland.json'
 const QUAKES_URL = 'https://apis.is/earthquake/is'
 
 const WIDTH = document.querySelector('.wrapper').offsetWidth
-
-const getWidth = function() { return document.querySelector('.wrapper').offsetWidth }
-
 const HEIGHT = WIDTH * .5
 const SCATTER_PADDING = 20
 const BAR_PADDING = 1
@@ -27,19 +24,13 @@ getJson(QUAKES_URL)
 */
 
 const barGraphSvg = d3.select('.quakes-bar-graph')
-
 const mapSvg = d3.select('.map-svg')
-
 const quakesSvg = d3.select('.quakes-svg')
-  // .append('svg')
-  // .attr('class','quakes-svg')
-  // .attr('width', WIDTH)
-  // .attr('height', HEIGHT)
 
 const projection = d3.geoOrthographic()
   .center([0, 0])
   .rotate([19, -65])
-  .scale(8000)
+  .scale(WIDTH * 8)
   .translate([WIDTH / 2, HEIGHT / 2])
 
 const path = d3.geoPath().projection(projection)
@@ -143,6 +134,8 @@ function renderQuakeSpots({ quakes, height, width, padding }){
     .attr('class', 'quake quake-location fade-in')
     .attr('id', d => `quake-location-${d.timestamp}`)
     .attr('fill', d => `rgb(${d.size * 120},0,0)`)
+    .attr('dx', d => xScale(d.size))
+    .attr('dy', d => yScale(d.size))
     .attr('transform', d => `translate(${projection([d.longitude, d.latitude])})`)
     .on('mouseover', (d, i) => {
       fadeOpacity(d3.selectAll('.quake-bar').filter((d, j) => j !== i), .1)
@@ -163,6 +156,17 @@ function renderQuakeSpots({ quakes, height, width, padding }){
 
 }
 
+window.updateSize = function updateSize(width) {
+  [ '.quakes-bar-graph', '.map-svg', '.quakes-svg' ].forEach(item => {
+    d3.select(item)
+      .attr('width', width)
+      .attr('height', width * .5)
+  })
+
+  projection
+    .scale(width * 8)
+    .translate([width / 2, (width / 2) * .5])
+}
 
 function transitionAttr({ selection, attr, value, delay=450, duration=450 }) {
   selection
