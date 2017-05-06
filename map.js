@@ -6,16 +6,18 @@ const HEIGHT = WIDTH * .5
 const SCATTER_PADDING = 20
 const BAR_PADDING = 1
 
-getJson(MAP_DATA_FILE)
-  .then(mapData => renderMap({ data: mapData, width: WIDTH, height: HEIGHT }))
+// setInterval(() => {
+  getJson(MAP_DATA_FILE)
+    .then(mapData => renderMap({ data: mapData, width: WIDTH, height: HEIGHT }))
 
-getJson(QUAKES_URL)
-  .then(data => data.results)
-  .then(quakes => quakes.filter(q => q.size >= 0))
-  .then(quakes => {
-    renderLargeGraph({ quakes, width: WIDTH, height: 120, padding: BAR_PADDING })
-    renderQuakeSpots({ quakes, width: WIDTH, height: HEIGHT, padding: SCATTER_PADDING })
-  }).catch(err => console.error('Error:', err))
+  getJson(QUAKES_URL)
+    .then(data => data.results)
+    .then(quakes => quakes.filter(q => q.size >= 0))
+    .then(quakes => {
+      renderLargeGraph({ quakes, width: WIDTH, height: HEIGHT / 10, padding: BAR_PADDING })
+      renderQuakeSpots({ quakes, width: WIDTH, height: HEIGHT, padding: SCATTER_PADDING })
+    }).catch(err => console.error('Error:', err))
+// }, 10000)
 
 /*
 **
@@ -96,7 +98,7 @@ function renderLargeGraph ({ quakes, height, width, padding }) {
         attr: 'height',
         value: d => d.size * 40,
         delay: (d, i) => i * 450,
-        duration: d => 2000
+        duration: d => 1000
       }))
       .attr('fill', d => `rgb(${d.size * 120},0,0)` )
 
@@ -159,8 +161,8 @@ function renderQuakeSpots({ quakes, height, width, padding }){
 window.updateSize = function updateSize(width) {
   [ '.quakes-bar-graph', '.map-svg', '.quakes-svg' ].forEach(item => {
     d3.select(item)
-      .attr('width', width)
-      .attr('height', width * .5)
+      .style('width', width)
+      .style('height', width * .5)
   })
 
   projection
