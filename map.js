@@ -14,7 +14,7 @@ const BAR_PADDING = 1
     .then(data => data.results)
     .then(quakes => quakes.filter(q => q.size >= 0))
     .then(quakes => {
-      renderLargeGraph({ quakes, width: WIDTH, height: HEIGHT / 10, padding: BAR_PADDING })
+      renderLargeGraph({ quakes, width: WIDTH, height: HEIGHT / 3, padding: BAR_PADDING })
       renderQuakeSpots({ quakes, width: WIDTH, height: HEIGHT, padding: SCATTER_PADDING })
     }).catch(err => console.error('Error:', err))
 // }, 10000)
@@ -81,6 +81,8 @@ function renderMap({ data: iceland, width, height }) {
 }
 
 function renderLargeGraph ({ quakes, height, width, padding }) {
+  const scaleHeight = d3.scaleLinear([0, d3.max(quakes, d => d.size)]).range([0, height - d3.max(quakes, d => d.size)])
+
   barGraphSvg
     .attr('height', height)
     .attr('width', width)
@@ -91,14 +93,14 @@ function renderLargeGraph ({ quakes, height, width, padding }) {
       .append('rect')
       .attr('class', 'quake quake-bar fade-in')
       .attr('x', (d, i) => i * width / quakes.length)
-      .attr('y', d => height - d.size * 40)
+      .attr('y', d => height - scaleHeight(d.size))
       .attr('width', width / quakes.length)
       .call(selection => transitionAttr({ // transition the height for 'growing' effect
         selection,
         attr: 'height',
-        value: d => d.size * 40,
-        delay: (d, i) => i * 450,
-        duration: d => 1000
+        value: d => scaleHeight(d.size),
+        delay: (d, i) => i * 50,
+        duration: d => 50
       }))
       .attr('fill', d => `rgb(${d.size * 120},0,0)` )
 
@@ -151,8 +153,8 @@ function renderQuakeSpots({ quakes, height, width, padding }){
       selection,
       attr: 'r',
       value: d => rScale(d.size),
-      delay: (d, i) => i * 450,
-      duration: d => 2000
+      delay: (d, i) => i * 50,
+      duration: d => 50
     }))
     .append('title').text(d => d.size)
 
@@ -200,6 +202,14 @@ function buildYScale(data, height, padding) {
   return d3.scaleLinear([
     d3.min(data, d => d.latitude ),
     d3.max(data, d => d.latitude )
+  ])
+   .range([height - padding, padding])
+}
+
+function buildYScaleBars(data, height, padding) {
+  return d3.scaleLinear([
+    d3.min(data, d => d.size ),
+    d3.max(data, d => d.size )
   ])
    .range([height - padding, padding])
 }
