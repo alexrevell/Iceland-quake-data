@@ -90,23 +90,34 @@ class App extends Component {
 
   renderMap({ data: iceland, width, height }) {
     const path = d3.geoPath().projection(this.projection)
-    const subunits = topojson.feature(iceland, iceland.objects.subunits)
-    const places = topojson.feature(iceland, iceland.objects.places)
-    console.log(places)
+    const subunits = topojson.feature(iceland, iceland.objects.subunits).features
+    const places = topojson.feature(iceland, iceland.objects.places).features
+
     return (
       <svg className='map-svg' height={height} width={width}>
-        {subunits.features.map((feature, i) => (
-          <Fragment>
+        <Fragment>
+          {subunits.map((feature, i) => (
             <path key={feature.id} className={`subunit ${feature.id}`} d={path(feature)}>
             </path>
-            <path key={places[i].id} d={path(places[i])} />
-          </Fragment>
-        ))}
+          ))}
+          {places.map((place, i) => (
+            <path key={place.properties.name} className='place' d={path(place)}>
+              <text
+                className='place-label'
+                dy='.35em'
+                x={place.geometry.coordinates[0] > -22 ? 6 : -6}
+                transform={`translate(${projection(place.geometry.coordinates)})`}
+                style={{ textAnchor: place.geometry.coordinates[0] > -22 ? 'start' : 'end'}}
+              >
+                {place.properties.name}
+              </text>
+            </path>
+          ))}
+        </Fragment>
       </svg>
-
     )
 
-    mapSvg
+    // mapSvg
       // // // .attr('width', width)
       // // // .attr('height', height)
       // // .selectAll('.subunit')
@@ -116,22 +127,22 @@ class App extends Component {
       // .attr('class', d => `subunit ${d.id}`)
       // .attr('d', path)
 
-    mapSvg.append('path')
-      .datum(topojson.feature(iceland, iceland.objects.places))
-      .attr('d', path)
-      .attr('class', 'place')
+    // mapSvg.append('path')
+    //   .datum(topojson.feature(iceland, iceland.objects.places))
+    //   .attr('d', path)
+    //   .attr('class', 'place')
 
     // Large towns / cities placename labels
 
-    mapSvg.selectAll('.place-label')
-      .data(topojson.feature(iceland, iceland.objects.places).features)
-      .enter().append('text')
-      .attr('class', 'place-label')
-      .attr('transform', d => `translate(${projection(d.geometry.coordinates)})`)
-      .attr('dy', '.35em')
-      .attr('x', d => d.geometry.coordinates[0] > -22 ? 6 : -6)
-      .style('text-anchor', d => d.geometry.coordinates[0] > -22 ? 'start' : 'end')
-      .text(d => d.properties.name)
+    // mapSvg.selectAll('.place-label')
+    //   .data(topojson.feature(iceland, iceland.objects.places).features)
+    //   .enter().append('text')
+    //   .attr('class', 'place-label')
+    //   .attr('transform', d => `translate(${projection(d.geometry.coordinates)})`)
+    //   .attr('dy', '.35em')
+    //   .attr('x', d => d.geometry.coordinates[0] > -22 ? 6 : -6)
+    //   .style('text-anchor', d => d.geometry.coordinates[0] > -22 ? 'start' : 'end')
+    //   .text(d => d.properties.name)
 
     // Iceland country text
 
