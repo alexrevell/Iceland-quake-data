@@ -72,7 +72,6 @@ class App extends Component {
         //   delay: (d, i) => i * 50,
         //   duration: d => 50
         // }))
-        // .attr('fill', d => `rgb(${d.size * 120},0,0)` )
 
         // .on('mouseover', (d, i) => {
         //   d3.selectAll('.quake-location').filter((d, j) => j !== i).call(fadeOpacity, .1)
@@ -84,8 +83,6 @@ class App extends Component {
         //   d3.select(this).classed('shadow', false)
         //   quakesSvg.classed('shadow', false)
         // })
-        // .append('title')
-        //   .text(d => `Size ${d.size} occured at ${d.timestamp} ${d.humanReadableLocation}`)
   }
 
   renderMap({ data: iceland, width, height }) {
@@ -97,13 +94,23 @@ class App extends Component {
       <svg className='map-svg' height={height} width={width}>
         <Fragment>
           {subunits.map((feature, i) => (
-            <path key={feature.id} className={`subunit ${feature.id}`} d={path(feature)}>
-            </path>
+            <Fragment key={`feature-${i}`}>
+              <path className={`subunit ${feature.id}`} d={path(feature)} />
+              <text className={`subunit-label ${feature.id}`}
+                transform={`translate(${path.centroid(feature)})`}
+                fontSize='14px'
+                dy='.35em'
+                fontFamily='sans-serif'
+                fontSize='14px'
+              >
+                {feature.properties.name}
+              </text>
+            </Fragment>
           ))}
           {places.map((place, i) => (
-            <path key={place.properties.name} className='place' d={path(place)}>
-              <text
-                className='place-label'
+            <Fragment key={`place-${i}`}>
+              <path key={place.properties.name} className='place' d={path(place)} />
+              <text key={`${place.properties.name}-${i}`} className='place-label'
                 dy='.35em'
                 x={place.geometry.coordinates[0] > -22 ? 6 : -6}
                 transform={`translate(${projection(place.geometry.coordinates)})`}
@@ -111,50 +118,23 @@ class App extends Component {
               >
                 {place.properties.name}
               </text>
-            </path>
+            </Fragment>
           ))}
         </Fragment>
       </svg>
     )
 
-    // mapSvg
-      // // // .attr('width', width)
-      // // // .attr('height', height)
-      // // .selectAll('.subunit')
-      // .data(subunits.features)
-      // .enter()
-      // .append('path')
-      // .attr('class', d => `subunit ${d.id}`)
-      // .attr('d', path)
-
-    // mapSvg.append('path')
-    //   .datum(topojson.feature(iceland, iceland.objects.places))
-    //   .attr('d', path)
-    //   .attr('class', 'place')
-
-    // Large towns / cities placename labels
-
-    // mapSvg.selectAll('.place-label')
-    //   .data(topojson.feature(iceland, iceland.objects.places).features)
-    //   .enter().append('text')
-    //   .attr('class', 'place-label')
-    //   .attr('transform', d => `translate(${projection(d.geometry.coordinates)})`)
-    //   .attr('dy', '.35em')
-    //   .attr('x', d => d.geometry.coordinates[0] > -22 ? 6 : -6)
-    //   .style('text-anchor', d => d.geometry.coordinates[0] > -22 ? 'start' : 'end')
-    //   .text(d => d.properties.name)
-
     // Iceland country text
 
-    mapSvg.selectAll('.subunit-label')
-      .data(topojson.feature(iceland, iceland.objects.subunits).features)
-      .enter().append('text')
-      .attr('class', d => `subunit-label ${d.id}`)
-      .attr('transform', d => `translate(${path.centroid(d)})`)
-      .attr('dy', '.35em')
-      .attr('font-family', 'sans-serif')
-      .attr('font-size', '14px')
-      .text(d => d.properties.name)
+    // mapSvg.selectAll('.subunit-label')
+    //   .data(topojson.feature(iceland, iceland.objects.subunits).features)
+    //   .enter().append('text')
+    //   .attr('class', d => `subunit-label ${d.id}`)
+    //   .attr('transform', d => `translate(${path.centroid(d)})`)
+    //   .attr('dy', '.35em')
+    //   .attr('font-family', 'sans-serif')
+    //   .attr('font-size', '14px')
+    //   .text(d => d.properties.name)
   }
 
   render() {
@@ -169,7 +149,6 @@ class App extends Component {
         <div className='f6 black fw3 ttu tracked'>total: {this.state.count}</div>
         <div className='Map' style={{ textAlign: 'left' }}>
           <div className='f6 black fw3 ttu tracked'>Last 3</div>
-
           <ul>
             {this.state.quakes.slice(0,3).map(quake =>
               <li key={quake.timestamp}>
