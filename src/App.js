@@ -166,10 +166,9 @@ class App extends Component {
             </div>
             <div className='map-container fl w-100 pa2'>
             { this.renderMap({ data: mapData, height: HEIGHT, width: WIDTH }) }
-              // const barGraphSvg = d3.select('.quakes-bar-graph')
-              // const mapSvg = d3.select('.map-svg')
-              // const quakesSvg = d3.select('.quakes-svg')
-
+              {/*const barGraphSvg = d3.select('.quakes-bar-graph')
+                const mapSvg = d3.select('.map-svg')
+                const quakesSvg = d3.select('.quakes-svg')*/}
             </div>
           </div>
         </div>
