@@ -77,28 +77,9 @@ class App extends Component {
         ))}
       </svg>
     )
-
-        // .call(selection => transitionAttr({ // transition the height for 'growing' effect
-        //   selection,
-        //   attr: 'height',
-        //   value: d => scaleHeight(d.size),
-        //   delay: (d, i) => i * 50,
-        //   duration: d => 50
-        // }))
-
-        // .on('mouseover', (d, i) => {
-        //   d3.selectAll('.quake-location').filter((d, j) => j !== i).call(fadeOpacity, .1)
-        //   d3.select(this).classed('shadow', true)
-        //   quakesSvg.classed('shadow', true)
-        // })
-        // .on('mouseout', (d, i) => {
-        //   d3.selectAll('.quake-location').filter((d, j) => j !== i).call(fadeOpacity, 1)
-        //   d3.select(this).classed('shadow', false)
-        //   quakesSvg.classed('shadow', false)
-        // })
   }
 
-  renderMap({ data: iceland, quakes, width, height, padding }) {
+  renderMap = ({ data: iceland, quakes, width, height, padding }) => {
     const path = d3.geoPath().projection(this.projection)
     const subunits = topojson.feature(iceland, iceland.objects.subunits).features
     const places = topojson.feature(iceland, iceland.objects.places).features
@@ -107,26 +88,24 @@ class App extends Component {
     const yScale = buildYScale(quakes, height, padding)
     const rScale = d3.scaleLinear([0, d3.max(quakes, d => d.size )]).range([0, height / 100])
 
-
     return (
       <svg className='map-svg' height={height} width={width}>
         <Fragment>
           {subunits.map((feature, i) => (
             <Fragment key={`feature-${i}`}>
-              <path className={`subunit ${feature.id}`} d={path(feature)}>
-                <text className={`subunit-label ${feature.id}`}
-                  transform={`translate(${path.centroid(feature)})`}
-                  dy='.35em'
-                >
-                  {feature.properties.name}
-                </text>
-              </path>
+              <path className={`subunit ${feature.id}`} d={path(feature)} />
+              <text className={`subunit-label ${feature.id}`}
+                transform={`translate(${path.centroid(feature)})`}
+                dy='.35em'
+              >
+                {feature.properties.name}
+              </text>
             </Fragment>
           ))}
           {places.map((place, i) => (
-            <Fragment key={`place-${i}`}>
-              <path key={place.properties.name} className='place' d={path(place)} />
-              <text key={`${place.properties.name}-${i}`} className='place-label'
+            <Fragment key={place.properties.name}>
+              <path className='place' d={path(place)} fill='grey' />
+              <text className='place-label'
                 dy='.35em'
                 x={place.geometry.coordinates[0] > -22 ? 6 : -6}
                 transform={`translate(${this.projection(place.geometry.coordinates)})`}
@@ -140,7 +119,7 @@ class App extends Component {
             <circle key={`quake-${i}`}
               className='quake quake-location'
               id={`quake-location-${quake.timestamp}`}
-              fill={`rgb(${quake.size * 120},0,0)`}
+              fill={`rgb(${Math.round(quake.size / Math.max(...quakes.map(q => q.size)) * 255)},0,0)`}
               dx={xScale(quake.size)}
               dy={yScale(quake.size)}
               r={rScale(quake.size)}
@@ -154,64 +133,37 @@ class App extends Component {
     )
   }
 
-  // renderQuakes({ quakes, height, width, padding }){
-  //   let xScale = buildXScale(quakes, width, padding)
-  //   let yScale = buildYScale(quakes, height, padding)
-  //   let rScale = d3.scaleLinear([0, d3.max(quakes, d => d.size )]).range([0, 10])
-  //
-  //   // quake circles
-  //
-  //     // .on('mouseover', (d, i) => {
-  //     //   fadeOpacity(d3.selectAll('.quake-bar').filter((d, j) => j !== i), .1)
-  //     //   d3.select('.quakes-container').select('svg').classed('shadow', true)
-  //     // })
-  //     // .on('mouseout', (d, i) => {
-  //     //   fadeOpacity(d3.selectAll('.quake-bar').filter((d, j) => j !== i), 1)
-  //     //   d3.select('.quakes-container').select('svg').classed('shadow', false)
-  //     // })
-  //     // .call(selection => transitionAttr({
-  //     //   selection,
-  //     //   attr: 'r',
-  //     //   value: d => rScale(d.size),
-  //     //   delay: (d, i) => i * 50,
-  //     //   duration: d => 50
-  //     // }))
+  render = () => (
+    <div className='App'>
+      <header className='tc pv1 pv2-ns'>
+        <h1 className='f5 f4-ns fw6 mid-gray'>Iceland Quakes</h1>
+        <img src={logo} className='App-logo' alt='logo' />
+        <h2 className='f6 gray fw2 ttu tracked'>Earthquakes from the past 48 hours</h2>
+      </header>
+      <div className='f6 black fw3 ttu tracked'>total: {this.state.count}</div>
+      <div className='f6 black fw3 ttu tracked'>largest: {Math.max(...this.state.quakes.map(q => q.size))}</div>
 
-
-  render() {
-
-    return (
-      <div className='App'>
-        <header className='tc pv1 pv2-ns'>
-          <h1 className='f5 f4-ns fw6 mid-gray'>Iceland Quakes</h1>
-          <img src={logo} className='App-logo' alt='logo' />
-          <h2 className='f6 gray fw2 ttu tracked'>Earthquakes from the past 48 hours</h2>
-        </header>
-        <div className='f6 black fw3 ttu tracked'>total: {this.state.count}</div>
-        <div className='f6 black fw3 ttu tracked'>largest: {Math.max(...this.state.quakes.map(q => q.size))}</div>
-
-        <div className='Map center' ref={map => {this.mapRef = map}}>
-          <div className='bar-graph-container'>
-            { this.renderLargeGraph({ quakes: this.state.quakes, height: this.state.width / 4, width: this.state.width, padding: BAR_PADDING }) }
-          </div>
-          <div className='map-container'>
-            { this.renderMap({ data: mapData, quakes: this.state.quakes, height: this.state.height, width: this.state.width, padding: SCATTER_PADDING }) }
-          </div>
+      <div className='Map center' ref={map => {this.mapRef = map}}>
+        <div className='bar-graph-container'>
+          { this.renderLargeGraph({ quakes: this.state.quakes, height: this.state.width / 4, width: this.state.width, padding: BAR_PADDING }) }
         </div>
-
-        <footer className='tc-l bg-right cover'>
-          <div className='w-100 ph3 pv1'>
-            <a className='link black-60 bg-white hover-purple inline-flex items-center ma2 tc br2 pa2' href='https://github.com/desnor/iceland-quakes' title='GitHub'>
-              <svg className='dib h2 w2' fill='currentColor' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fillRule='evenodd' clipRule='evenodd' strokeLinejoin='round' strokeMiterlimit='1.414'>
-                <path d='M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.083-.202-.358-1.015.077-2.117 0 0 .672-.215 2.2.82.638-.178 1.323-.266 2.003-.27.68.004 1.364.092 2.003.27 1.527-1.035 2.198-.82 2.198-.82.437 1.102.163 1.915.08 2.117.513.56.823 1.274.823 2.147 0 3.073-1.87 3.75-3.653 3.947.287.246.543.735.543 1.48 0 1.07-.01 1.933-.01 2.195 0 .215.144.463.55.385C13.71 14.53 16 11.534 16 8c0-4.418-3.582-8-8-8'/>
-              </svg>
-              <span className='f6 ml3 pr2'>View on GitHub</span>
-            </a>
-          </div>
-        </footer>
+        <div className='map-container'>
+          { this.renderMap({ data: mapData, quakes: this.state.quakes, height: this.state.height, width: this.state.width, padding: SCATTER_PADDING }) }
+        </div>
       </div>
-    );
-  }
+
+      <footer className='tc-l bg-right cover'>
+        <div className='w-100 ph3 pv1'>
+          <a className='link black-60 bg-white hover-purple inline-flex items-center ma2 tc br2 pa2' href='https://github.com/desnor/iceland-quakes' title='GitHub'>
+            <svg className='dib h2 w2' fill='currentColor' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fillRule='evenodd' clipRule='evenodd' strokeLinejoin='round' strokeMiterlimit='1.414'>
+              <path d='M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.083-.202-.358-1.015.077-2.117 0 0 .672-.215 2.2.82.638-.178 1.323-.266 2.003-.27.68.004 1.364.092 2.003.27 1.527-1.035 2.198-.82 2.198-.82.437 1.102.163 1.915.08 2.117.513.56.823 1.274.823 2.147 0 3.073-1.87 3.75-3.653 3.947.287.246.543.735.543 1.48 0 1.07-.01 1.933-.01 2.195 0 .215.144.463.55.385C13.71 14.53 16 11.534 16 8c0-4.418-3.582-8-8-8'/>
+            </svg>
+            <span className='f6 ml3 pr2'>View on GitHub</span>
+          </a>
+        </div>
+      </footer>
+    </div>
+  )
 }
 
 export default App;
