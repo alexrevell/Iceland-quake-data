@@ -4,15 +4,12 @@ import logo from './logo.svg';
 import mapData from './data/iceland.json'
 import './App.css';
 
-const WIDTH = 1200
-const HEIGHT = WIDTH * .5
 const SCATTER_PADDING = 20
 const BAR_PADDING = 1
 
 const d3 = window.d3
 const topojson = window.topojson
 
-const MAP_DATA = './iceland.json'
 const QUAKES_URL = 'https://apis.is/earthquake/is'
 
 class App extends Component {
@@ -21,8 +18,8 @@ class App extends Component {
     this.state = {
       quakes: [],
       count: 0,
-      width: document.querySelector('#root').getBoundingClientRect().width,
-      height: 600
+      width: 800,
+      height: 400
     }
   }
 
@@ -65,7 +62,7 @@ class App extends Component {
       <svg className='quakes-bar-graph' height={height} width={width}>
         { quakes.map((quake, i) => (
           <rect key={quake.timestamp}
-            className='quake quake-bar fade-in'
+            className='quake quake-bar'
             x={i * width / count}
             y={height - scaleHeight(quake.size)}
             width={width / count}
@@ -86,7 +83,7 @@ class App extends Component {
 
     const xScale = buildXScale(quakes, width, padding)
     const yScale = buildYScale(quakes, height, padding)
-    const rScale = d3.scaleLinear([0, d3.max(quakes, d => d.size )]).range([0, height / 100])
+    const rScale = buildRScale(quakes, height)
 
     return (
       <svg className='map-svg' height={height} width={width}>
@@ -182,4 +179,12 @@ function buildYScale(data, height, padding) {
     d3.max(data, d => d.latitude )
   ])
    .range([height - padding, padding])
+}
+
+function buildRScale(data, height) {
+  return  d3.scaleLinear([
+    0,
+    d3.max(data, d => d.size )
+  ])
+  .range([0, height / 100])
 }

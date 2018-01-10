@@ -50,7 +50,38 @@
   font-family: sans-serif;
 }
 
+.quake-location {
+  fill-opacity: .75;
+}
+
+.quake-location:hover {
+  animation: fadeIn 0.5s;
+}
+
+.quake-bar {
+  fill-opacity: .75;
+}
+
+.quake-bar:hover {
+  animation: fadeIn 0.5s;
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+@keyframes fadeIn {
+  from { fill-opacity: 0.75; }
+  to { fill-opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0.25; }
+}
+
+/* @media screen and (min-width(25em)) {
+  .Map {
+  }
+} */
