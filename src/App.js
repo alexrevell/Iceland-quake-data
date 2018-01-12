@@ -4,13 +4,13 @@ import logo from './logo.svg';
 import mapData from './data/iceland.json'
 import './App.css';
 
-const SCATTER_PADDING = 20
-const BAR_PADDING = 1
-
 const d3 = window.d3
 const topojson = window.topojson
 
 const QUAKES_URL = 'https://apis.is/earthquake/is'
+const SCATTER_PADDING = 20
+const BAR_PADDING = 1
+const INITIAL_WIDTH = document.body.clientWidth * .8
 
 class App extends Component {
   constructor(props){
@@ -18,8 +18,8 @@ class App extends Component {
     this.state = {
       quakes: [],
       count: 0,
-      width: 800,
-      height: 400
+      width: INITIAL_WIDTH,
+      height: INITIAL_WIDTH / 2
     }
   }
 
@@ -42,7 +42,7 @@ class App extends Component {
   componentDidMount = () => {
     window.addEventListener('resize', this.handleResize)
     this.fetchQuakes()
-    this.interval = setInterval(() => this.fetchQuakes(), 1000 * 60)
+    this.interval = setInterval(this.fetchQuakes, 1000 * 60)
   }
 
   componentWillUnmount = () => {
