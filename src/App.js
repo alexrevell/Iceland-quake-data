@@ -1,7 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import ReactDOM from 'react-dom';
-import logo from './logo.svg';
+
+import { buildXScale, buildYScale, buildRScale } from './scales'
+import logo from './richter.svg';
 import mapData from './data/iceland.json'
+
 import './App.css';
 
 const d3 = window.d3
@@ -87,7 +90,7 @@ class App extends Component {
 
     return (
       <svg className='map-svg' height={height} width={width}>
-        <Fragment>
+        <g>
           {subunits.map((feature, i) => (
             <Fragment key={`feature-${i}`}>
               <path className={`subunit ${feature.id}`} d={path(feature)} />
@@ -125,7 +128,7 @@ class App extends Component {
               <text>{quake.size}</text>
             </circle>
           ))}
-        </Fragment>
+        </g>
       </svg>
     )
   }
@@ -158,33 +161,16 @@ class App extends Component {
             <span className='f6 ml3 pr2'>View on GitHub</span>
           </a>
         </div>
+        <div className='w-100 ph3 pv1'>
+          <a className='link black-60 bg-white hover-purple inline-flex items-center ma2 tc br2 pa2' href='https://thenounproject.com/viral.faisalovers' title='Noun Project'>
+            <span className='f6 ml3 pr2'>
+              Seismometer icon created by Viral faisalovers from the Noun Project
+            </span>
+          </a>
+        </div>
       </footer>
     </div>
   )
 }
 
 export default App;
-
-function buildXScale(data, width, padding) {
-  return d3.scaleLinear([
-    d3.min(data, d => d.longitude ),
-    d3.max(data, d => d.longitude )
-  ])
-  .range([padding, width - padding])
-}
-
-function buildYScale(data, height, padding) {
-  return d3.scaleLinear([
-    d3.min(data, d => d.latitude ),
-    d3.max(data, d => d.latitude )
-  ])
-   .range([height - padding, padding])
-}
-
-function buildRScale(data, height) {
-  return  d3.scaleLinear([
-    0,
-    d3.max(data, d => d.size )
-  ])
-  .range([0, height / 100])
-}
