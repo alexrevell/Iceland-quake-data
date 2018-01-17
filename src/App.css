@@ -50,20 +50,13 @@
   font-family: sans-serif;
 }
 
-.quake-location {
+.quake-bar, .quake-location {
   fill-opacity: .75;
+  transition: fill-opacity 0.7s ease-in-out;
 }
 
-.quake-location:hover {
-  animation: fadeIn 0.5s;
-}
-
-.quake-bar {
-  fill-opacity: .75;
-}
-
-.quake-bar:hover {
-  animation: fadeIn 0.5s;
+.quake-bar:hover, .quake-location:hover {
+  fill-opacity: 1;
 }
 
 @keyframes spin {

@@ -17,19 +17,21 @@ export function buildXScale(data, width, padding) {
 export function buildYScale(data, height, padding) {
   const latitudes = data.map(pluck('latitude'))
 
-  return scaleLinear([
-    min(...latitudes),
-    max(...latitudes),
-  ])
+  return scaleLinear()
+    .domain([
+      min(...latitudes),
+      max(...latitudes),
+    ])
    .range([height - padding, padding])
 }
 
 export function buildRScale(data, height) {
-  return scaleLinear([
-    0,
-    max(...data.map(pluck('size')))
-  ])
-  .range([0, height / 100])
+  return scaleLinear()
+    .domain([
+      0,
+      max(...data.map(pluck('size')))
+    ])
+    .range([0, height])
 }
 
 function pluck (attr) {

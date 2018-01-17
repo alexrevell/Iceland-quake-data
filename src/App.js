@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import { buildXScale, buildYScale, buildRScale } from './scales'
@@ -59,8 +59,8 @@ class App extends Component {
   }
 
  renderLargeGraph = ({ quakes, count, height, width, padding }) => {
-    const scaleHeight = d3.scaleLinear().domain([0, d3.max(quakes, d => d.size)]).range([0, height])
-
+    const scaleHeight = buildRScale(quakes, height)
+    console.log('ticks: ', scaleHeight.ticks())
     return (
       <svg className='quakes-bar-graph' height={height} width={width}>
         { quakes.map((quake, i) => (
@@ -86,13 +86,13 @@ class App extends Component {
 
     const xScale = buildXScale(quakes, width, padding)
     const yScale = buildYScale(quakes, height, padding)
-    const rScale = buildRScale(quakes, height)
+    const rScale = buildRScale(quakes, height / 50)
 
     return (
       <svg className='map-svg' height={height} width={width}>
         <g>
           {subunits.map((feature, i) => (
-            <Fragment key={`feature-${i}`}>
+            <g key={`feature-${i}`}>
               <path className={`subunit ${feature.id}`} d={path(feature)} />
               <text className={`subunit-label ${feature.id}`}
                 transform={`translate(${path.centroid(feature)})`}
@@ -100,10 +100,10 @@ class App extends Component {
               >
                 {feature.properties.name}
               </text>
-            </Fragment>
+            </g>
           ))}
           {places.map((place, i) => (
-            <Fragment key={place.properties.name}>
+            <g key={place.properties.name}>
               <path className='place' d={path(place)} fill='grey' />
               <text className='place-label'
                 dy='.35em'
@@ -113,7 +113,7 @@ class App extends Component {
               >
                 {place.properties.name}
               </text>
-            </Fragment>
+            </g>
           ))}
           {quakes.map((quake, i) => (
             <circle key={`quake-${i}`}
