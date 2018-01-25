@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import { geoOrthographic, geoPath } from 'd3-geo'
+import { feature } from 'topojson'
 
 import { buildXScale, buildYScale, buildRScale } from './scales'
-import logo from './richter.svg';
+import logo from './richter.svg'
 import mapData from './data/iceland.json'
 
-import './App.css';
-
-const d3 = window.d3
-const topojson = window.topojson
+import './App.css'
 
 const QUAKES_URL = 'https://apis.is/earthquake/is'
 const SCATTER_PADDING = 20
@@ -27,7 +26,7 @@ class App extends Component {
   }
 
   get projection() {
-    return d3.geoOrthographic()
+    return geoOrthographic()
       .center([0, 0])
       .rotate([19, -65])
       .scale(this.state.width * 8)
@@ -80,9 +79,9 @@ class App extends Component {
   }
 
   renderMap = ({ data: iceland, quakes, width, height, padding }) => {
-    const path = d3.geoPath().projection(this.projection)
-    const subunits = topojson.feature(iceland, iceland.objects.subunits).features
-    const places = topojson.feature(iceland, iceland.objects.places).features
+    const path = geoPath().projection(this.projection)
+    const subunits = feature(iceland, iceland.objects.subunits).features
+    const places = feature(iceland, iceland.objects.places).features
 
     const xScale = buildXScale(quakes, width, padding)
     const yScale = buildYScale(quakes, height, padding)
