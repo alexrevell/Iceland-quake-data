@@ -59,7 +59,7 @@ class App extends Component {
 
  renderLargeGraph = ({ quakes, count, height, width, padding }) => {
     const scaleHeight = buildRScale(quakes, height)
-    console.log('ticks: ', scaleHeight.ticks())
+
     return (
       <svg className='quakes-bar-graph' height={height} width={width}>
         { quakes.map((quake, i) => (
