@@ -138,9 +138,10 @@ class App extends Component {
         <h1 className='f5 f4-ns fw6 mid-gray'>Iceland Quakes</h1>
         <img src={logo} className='App-logo' alt='logo' />
         <h2 className='f6 gray fw2 ttu tracked'>Earthquakes from the past 48 hours</h2>
+
+        <div className='f6 black fw3 ttu tracked'>total: {this.state.count}</div>
+        <div className='f6 black fw3 ttu tracked'>largest: {Math.max(...this.state.quakes.map(q => q.size))}</div>
       </header>
-      <div className='f6 black fw3 ttu tracked'>total: {this.state.count}</div>
-      <div className='f6 black fw3 ttu tracked'>largest: {Math.max(...this.state.quakes.map(q => q.size))}</div>
 
       <div className='Map center' ref={map => {this.mapRef = map}}>
         <div className='bar-graph-container'>
