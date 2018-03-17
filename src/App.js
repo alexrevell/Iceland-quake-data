@@ -34,14 +34,6 @@ class App extends Component {
       .translate([this.state.width / 2, this.state.height / 2])
   }
 
-  fetchQuakes = async () => {
-    const res = await fetch(QUAKES_URL)
-    const { results: quakes } = await res.json()
-    const realQuakes = quakes.filter(q => q.size >= 0)
-
-    this.setState({ quakes: realQuakes, count: realQuakes.length })
-  }
-
   componentDidMount = () => {
     window.addEventListener('resize', this.handleResize)
     this.fetchQuakes()
@@ -53,6 +45,14 @@ class App extends Component {
     window.removeEventListener('resize', this.handleResize)
   }
 
+  fetchQuakes = async () => {
+    const res = await fetch(QUAKES_URL)
+    const { results: quakes } = await res.json()
+    const realQuakes = quakes.filter(q => q.size >= 0)
+
+    this.setState({ quakes: realQuakes, count: realQuakes.length })
+  }
+
   handleResize = () => {
     const mapRef = ReactDOM.findDOMNode(this.mapRef)
     this.setState({ width: mapRef.offsetWidth, height: mapRef.offsetWidth / 2 })
@@ -60,21 +60,38 @@ class App extends Component {
 
  renderLargeGraph = ({ quakes, count, height, width, padding }) => {
     const scaleHeight = buildRScale(quakes, height)
-    console.log('ticks: ', scaleHeight.ticks())
+    const ticks = scaleHeight.ticks()
+    console.log('ticks: ', ticks)
     return (
       <svg className='quakes-bar-graph' height={height} width={width}>
+        <g>
+          { ticks.map(tick => (
+            <text
+              className='tick f6 gray fw2 ttu tracked'
+              key={tick}
+              x={0}
+              y={height - scaleHeight(tick)}
+              height={scaleHeight(tick)}
+              width={width / count + padding}
+            >
+              { tick }
+            </text>
+          ) )}
+        </g>
+        <g>
         { quakes.map((quake, i) => (
           <rect key={quake.timestamp}
             className='quake quake-bar'
-            x={i * width / count}
+            x={(i * width) / (count + 1)}
             y={height - scaleHeight(quake.size)}
-            width={width / count}
+            width={width / (count + padding)}
             height={scaleHeight(quake.size)}
             fill={`rgb(${quake.size * 120},0,0)`}
           >
             <title>{`Size ${quake.size} occured at ${quake.timestamp} ${quake.humanReadableLocation}`}</title>
           </rect>
         ))}
+        </g>
       </svg>
     )
   }
@@ -140,8 +157,8 @@ class App extends Component {
         <img src={logo} className='App-logo' alt='logo' />
         <h2 className='f6 gray fw2 ttu tracked'>Earthquakes from the past 48 hours</h2>
       </header>
-      <div className='f6 black fw3 ttu tracked'>total: {this.state.count}</div>
-      <div className='f6 black fw3 ttu tracked'>largest: {Math.max(...this.state.quakes.map(q => q.size))}</div>
+      <div className='f6 gray fw2 tracked'>Total: {this.state.count}</div>
+      <div className='f6 gray fw2 tracked'>Largest: {Math.max(...this.state.quakes.map(q => q.size))}</div>
 
       <div className='Map center' ref={map => {this.mapRef = map}}>
         <div className='bar-graph-container'>

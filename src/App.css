@@ -16,6 +16,15 @@
 
 .bar-graph-container {
   height: 25%;
+  /* padding: 10px; */
+}
+
+.quakes-bar-graph {
+  /* margin-left: 25px; */
+}
+
+.tick {
+  
 }
 
 .map-container {
