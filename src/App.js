@@ -61,28 +61,53 @@ class App extends Component {
  renderLargeGraph = ({ quakes, count, height, width, padding }) => {
     const scaleHeight = buildRScale(quakes, height)
     const ticks = scaleHeight.ticks()
+    const yAxis = d3.axisLeft(scaleHeight)
     console.log('ticks: ', ticks)
+
     return (
       <svg className='quakes-bar-graph' height={height} width={width}>
-        <g>
+        <g
+          fill='none'
+          fontSize='10'
+          fontFamily='sans-serif'
+          textAnchor='middle'
+        >
+          <path className="domain"
+            stroke="#000"
+            d="M0.5,6V0.5H880.5V6"
+            transform={`rotate(90) translate(0,0)`}
+          ></path>
           { ticks.map(tick => (
-            <text
-              className='tick f6 gray fw2 ttu tracked'
+            <g
               key={tick}
-              x={0}
-              y={height - scaleHeight(tick)}
-              height={scaleHeight(tick)}
-              width={width / count + padding}
+              className='tick'
+              opacity='1'
+              width={100}
+              // transform={`translate(20,0)`}
             >
-              { tick }
-            </text>
+              <line stroke='#000' y2={height - scaleHeight(tick)}
+                transform='rotate(90)'
+              ></line>
+              <text
+                fill='#000'
+                dy='0.71em'
+                className='tick f6 gray fw2 ttu tracked'
+                x={0}
+                y={height - scaleHeight(tick)}
+                height={scaleHeight(tick)}
+                width={width / count + padding}
+                textAnchor='end'
+              >
+                {tick}
+              </text>
+            </g>
           ) )}
         </g>
         <g>
         { quakes.map((quake, i) => (
           <rect key={quake.timestamp}
             className='quake quake-bar'
-            x={(i * width) / (count + 1)}
+            x={(i * width) / (count + padding)}
             y={height - scaleHeight(quake.size)}
             width={width / (count + padding)}
             height={scaleHeight(quake.size)}
