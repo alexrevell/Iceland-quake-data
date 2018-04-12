@@ -72,27 +72,36 @@ class App extends Component {
           fontFamily='sans-serif'
           textAnchor='middle'
         >
-          <path className="domain"
+          <line className="axisY"
             stroke="#000"
-            d="M0.5,6V0.5H880.5V6"
-            transform={`rotate(90) translate(0,0)`}
-          ></path>
+            x1={0}
+            x2={0}
+            y1={0}
+            y2={height}
+          ></line>
+          <line className="axisX"
+            stroke="#000"
+            x1={0}
+            x2={width}
+            y1={height}
+            y2={height}
+          ></line>
           { ticks.map(tick => (
             <g
               key={tick}
               className='tick'
               opacity='1'
-              width={100}
+              // width={100}
               // transform={`translate(20,0)`}
             >
-              <line stroke='#000' y2={height - scaleHeight(tick)}
-                transform='rotate(90)'
+              <line stroke='#000' x1={0} x2={-3} y1={height - scaleHeight(tick)} y2={height - scaleHeight(tick)}
+                // transform='rotate(90)'
               ></line>
               <text
                 fill='#000'
                 dy='0.71em'
                 className='tick f6 gray fw2 ttu tracked'
-                x={0}
+                x={-5}
                 y={height - scaleHeight(tick)}
                 height={scaleHeight(tick)}
                 width={width / count + padding}

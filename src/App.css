@@ -20,12 +20,11 @@
 }
 
 .quakes-bar-graph {
-  /* margin-left: 25px; */
-  padding: 15px 25px;
+  padding: 15px 30px;
 }
 
 .tick {
-
+  font-size: 1em;
 }
 
 .map-container {
