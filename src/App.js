@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import { geoOrthographic, geoPath } from 'd3-geo'
+import { feature } from 'topojson'
 
 import { buildXScale, buildYScale, buildRScale } from './scales'
-import logo from './richter.svg';
+import logo from './richter.svg'
 import mapData from './data/iceland.json'
 
-import './App.css';
-
-const d3 = window.d3
-const topojson = window.topojson
+import './App.css'
 
 const QUAKES_URL = 'https://apis.is/earthquake/is'
 const SCATTER_PADDING = 20
@@ -27,7 +26,7 @@ class App extends Component {
   }
 
   get projection() {
-    return d3.geoOrthographic()
+    return geoOrthographic()
       .center([0, 0])
       .rotate([19, -65])
       .scale(this.state.width * 8)
@@ -37,7 +36,7 @@ class App extends Component {
   componentDidMount = () => {
     window.addEventListener('resize', this.handleResize)
     this.fetchQuakes()
-    this.interval = setInterval(this.fetchQuakes, 1000 * 60)
+    this.interval = setInterval(this.fetchQuakes, 3000 * 60)
   }
 
   componentWillUnmount = () => {
@@ -61,8 +60,6 @@ class App extends Component {
  renderLargeGraph = ({ quakes, count, height, width, padding }) => {
     const scaleHeight = buildRScale(quakes, height)
     const ticks = scaleHeight.ticks()
-    const yAxis = d3.axisLeft(scaleHeight)
-    console.log('ticks: ', ticks)
 
     return (
       <svg className='quakes-bar-graph' height={height} width={width}>
@@ -72,31 +69,23 @@ class App extends Component {
           fontFamily='sans-serif'
           textAnchor='middle'
         >
-          <line className="axisY"
-            stroke="#000"
+          <line className='axis'
+            stroke='#000'
             x1={0}
             x2={0}
             y1={0}
             y2={height}
           ></line>
-          <line className="axisX"
-            stroke="#000"
+          <line className='axis'
+            stroke='#000'
             x1={0}
             x2={width}
             y1={height}
             y2={height}
           ></line>
           { ticks.map(tick => (
-            <g
-              key={tick}
-              className='tick'
-              opacity='1'
-              // width={100}
-              // transform={`translate(20,0)`}
-            >
-              <line stroke='#000' x1={0} x2={-3} y1={height - scaleHeight(tick)} y2={height - scaleHeight(tick)}
-                // transform='rotate(90)'
-              ></line>
+            <g key={tick} className='tick'>
+              <line stroke='#000' x1={0} x2={-3} y1={height - scaleHeight(tick)} y2={height - scaleHeight(tick)} />
               <text
                 fill='#000'
                 dy='0.71em'
@@ -131,9 +120,9 @@ class App extends Component {
   }
 
   renderMap = ({ data: iceland, quakes, width, height, padding }) => {
-    const path = d3.geoPath().projection(this.projection)
-    const subunits = topojson.feature(iceland, iceland.objects.subunits).features
-    const places = topojson.feature(iceland, iceland.objects.places).features
+    const path = geoPath().projection(this.projection)
+    const subunits = feature(iceland, iceland.objects.subunits).features
+    const places = feature(iceland, iceland.objects.places).features
 
     const xScale = buildXScale(quakes, width, padding)
     const yScale = buildYScale(quakes, height, padding)
@@ -224,4 +213,4 @@ class App extends Component {
   )
 }
 
-export default App;
+export default App
