@@ -84,7 +84,7 @@ class App extends Component {
             y2={height}
           ></line>
           { ticks.map(tick => (
-            <g key={tick} className='tick'>
+            <g key={tick}>
               <line stroke='#000' x1={0} x2={-3} y1={height - scaleHeight(tick)} y2={height - scaleHeight(tick)} />
               <text
                 fill='#000'
