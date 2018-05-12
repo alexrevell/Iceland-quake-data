@@ -10,16 +10,15 @@
 
 .Map {
   width: 80%;
-  text-align: center;
+  margin: auto;
 }
 
 .bar-graph-container {
   height: 25%;
-  /* padding: 10px; */
 }
 
 .quakes-bar-graph {
-  padding: 15px 30px;
+  padding: 10px 0px 15px 25px;
 }
 
 .tick {

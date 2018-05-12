@@ -71,26 +71,26 @@ class App extends Component {
         >
           <line className='axis'
             stroke='#000'
-            x1={0}
-            x2={0}
+            x1={width / count}
+            x2={width / count}
             y1={0}
             y2={height}
-          ></line>
+          />
           <line className='axis'
             stroke='#000'
-            x1={0}
+            x1={width / count}
             x2={width}
             y1={height}
             y2={height}
-          ></line>
+          />
           { ticks.map(tick => (
             <g key={tick}>
-              <line stroke='#000' x1={0} x2={-3} y1={height - scaleHeight(tick)} y2={height - scaleHeight(tick)} />
+              <line stroke='#000' x1={width / count} x2={ width / count - 3} y1={height - scaleHeight(tick)} y2={height - scaleHeight(tick)} />
               <text
                 fill='#000'
                 dy='0.71em'
                 className='tick f6 gray fw2 ttu tracked'
-                x={-5}
+                x={width / count - 5}
                 y={height - scaleHeight(tick)}
                 height={scaleHeight(tick)}
                 width={width / count + padding}
@@ -105,7 +105,7 @@ class App extends Component {
         { quakes.map((quake, i) => (
           <rect key={quake.timestamp}
             className='quake quake-bar'
-            x={(i * width) / (count + padding)}
+            x={((i + 1) * width / count) + padding}
             y={height - scaleHeight(quake.size)}
             width={width / (count + padding)}
             height={scaleHeight(quake.size)}
@@ -183,9 +183,9 @@ class App extends Component {
       <div className='f6 gray fw2 tracked'>Total: {this.state.count}</div>
       <div className='f6 gray fw2 tracked'>Largest: {Math.max(...this.state.quakes.map(q => q.size))}</div>
 
-      <div className='Map center' ref={map => {this.mapRef = map}}>
+      <div className='Map' ref={map => {this.mapRef = map}}>
         <div className='bar-graph-container'>
-          { this.renderLargeGraph({ quakes: this.state.quakes, count: this.state.count, height: this.state.width / 4, width: this.state.width, padding: BAR_PADDING }) }
+          { this.renderLargeGraph({ quakes: this.state.quakes, count: this.state.count + 1, height: this.state.width / 4, width: this.state.width, padding: BAR_PADDING }) }
         </div>
         <div className='map-container'>
           { this.renderMap({ data: mapData, quakes: this.state.quakes, height: this.state.height, width: this.state.width, padding: SCATTER_PADDING }) }
