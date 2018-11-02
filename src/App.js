@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { geoOrthographic, geoPath } from 'd3-geo'
 import { feature } from 'topojson'
 
-import { buildXScale, buildYScale, buildRScale } from './scales'
+import { buildXScale, buildYScale, buildRScale } from './services/scales'
 import logo from './richter.svg'
 import mapData from './data/iceland.json'
 
@@ -172,4 +172,4 @@ class App extends Component {
   )
 }
 
-export default App;
+export default App
