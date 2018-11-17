@@ -1,6 +1,6 @@
+import { geoOrthographic, geoPath } from 'd3-geo'
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { geoOrthographic, geoPath } from 'd3-geo'
 import { feature } from 'topojson'
 
 import { buildXScale, buildYScale, buildRScale } from './services/scales'
@@ -15,14 +15,11 @@ const BAR_PADDING = 1
 const INITIAL_WIDTH = document.body.clientWidth * .8
 
 class App extends Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      quakes: [],
-      count: 0,
-      width: INITIAL_WIDTH,
-      height: INITIAL_WIDTH / 2
-    }
+  state = {
+    quakes: [],
+    count: 0,
+    width: INITIAL_WIDTH,
+    height: INITIAL_WIDTH / 2
   }
 
   get projection() {
@@ -63,6 +60,7 @@ class App extends Component {
     return (
       <svg className='quakes-bar-graph' height={height} width={width}>
         { quakes.map((quake, i) => (
+          // TODO: make Rect component
           <rect key={quake.timestamp}
             className='quake quake-bar'
             x={i * width / count}
@@ -102,6 +100,7 @@ class App extends Component {
             </g>
           ))}
           {places.map((place, i) => (
+            // TODO: Place component
             <g key={place.properties.name}>
               <path className='place' d={path(place)} fill='grey' />
               <text className='place-label'
@@ -115,6 +114,7 @@ class App extends Component {
             </g>
           ))}
           {quakes.map((quake, i) => (
+            // TODO: Circle component
             <circle key={`quake-${i}`}
               className='quake quake-location'
               id={`quake-location-${quake.timestamp}`}

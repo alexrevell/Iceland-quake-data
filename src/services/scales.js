@@ -1,24 +1,28 @@
 import scaleLinear from 'd3-scale/src/linear'
-import { map, max, min, pluck } from './utils'
+import { mapAttrs, max, min, over, pipe } from './utils'
+
+const minMax = over(Math.min, Math.max)
 
 export function buildXScale(data, width, padding) {
-  const longitudes = mapAttrs('longitude')(data)
-  const longMin = min(...longitudes)
-  const longMax = max(...longitudes)
+  const [ min, max ] = pipe(
+    mapAttrs('longitude'),
+    minMax,
+  )(data)
 
   return buildLinearScale({
-    domain: [ longMin, longMax ],
+    domain: [ min, max ],
     range: [ padding, width - padding ],
   })
 }
 
 export function buildYScale(data, height, padding) {
-  const latitudes = mapAttrs('latitude')(data)
-  const latMin = min(...latitudes)
-  const latMax = max(...latitudes)
+  const [ min, max ] = pipe(
+    mapAttrs('latitude'),
+    minMax,
+  )(data)
 
   return buildLinearScale({
-    domain: [ latMin, latMax ],
+    domain: [ min, max ],
     range: [ height - padding, padding ],
   })
 }
@@ -35,8 +39,4 @@ export function buildRScale(data, height) {
 
 function buildLinearScale({ domain, range }) {
   return scaleLinear().domain(domain).range(range)
-}
-
-function mapAttrs(...attr) {
-  return map(pluck(...attr))
 }

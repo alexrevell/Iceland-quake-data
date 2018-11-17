@@ -1,11 +1,17 @@
+export const max = Math.max
+export const min = Math.min
+
 export function map(fn) {
   return xs => xs.map(fn)
 }
 
-export const max = Math.max
+export function mapAttrs(...attrs) {
+  return map(pluck(...attrs))
+}
 
-export const min = Math.min
-
+export function over(...fns) {
+  return (...args) => fns.map(fn => fn(...args))
+}
 export function pipe(...fns) {
   return (...args) => fns.reduce((acc, fn) => fn(acc), ...args)
 }
