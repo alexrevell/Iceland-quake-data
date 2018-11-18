@@ -6,6 +6,7 @@ import { feature } from 'topojson'
 import { buildXScale, buildYScale, buildRScale } from './services/scales'
 import logo from './richter.svg'
 import mapData from './data/iceland.json'
+import Rect from './Rect'
 
 import './App.css'
 
@@ -60,17 +61,19 @@ class App extends Component {
     return (
       <svg className='quakes-bar-graph' height={height} width={width}>
         { quakes.map((quake, i) => (
-          // TODO: make Rect component
-          <rect key={quake.timestamp}
+          <Rect
+            i={i}
             className='quake quake-bar'
+            fill={`rgb(${quake.size * 120},0,0)`}
+            height={scaleHeight(quake.size)}
+            key={quake.timestamp}
+            quake={quake}
+            width={width / count}
             x={i * width / count}
             y={height - scaleHeight(quake.size)}
-            width={width / count}
-            height={scaleHeight(quake.size)}
-            fill={`rgb(${quake.size * 120},0,0)`}
           >
             <title>{`Size ${quake.size} occured at ${quake.timestamp} ${quake.humanReadableLocation}`}</title>
-          </rect>
+          </Rect>
         ))}
       </svg>
     )
