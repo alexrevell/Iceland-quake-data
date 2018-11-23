@@ -56,16 +56,15 @@
   &.end {
     text-anchor: end;
   }
-
 }
 
 .quake-bar, .quake-location {
   fill-opacity: .75;
   transition: fill-opacity 0.7s ease-in-out;
-}
 
-.quake-bar:hover, .quake-location:hover {
-  fill-opacity: 1;
+  &:hover {
+    fill-opacity: 1;
+  }
 }
 
 @keyframes spin {
@@ -82,8 +81,3 @@
   from { opacity: 1; }
   to { opacity: 0.25; }
 }
-
-/* @media screen and (min-width(25em)) {
-  .Map {
-  }
-} */
