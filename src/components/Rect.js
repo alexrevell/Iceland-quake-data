@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Rect({ children, className, fill, height, i, key, quake, width, x, y }) {
+function Rect({ children, className, fill, height, width, x, y }) {
   return (
     <rect
       className={className}

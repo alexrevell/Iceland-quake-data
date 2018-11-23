@@ -6,13 +6,13 @@ import { feature } from 'topojson'
 import { buildXScale, buildYScale, buildRScale } from './services/scales'
 import logo from './richter.svg'
 import mapData from './data/iceland.json'
-import Rect from './Rect'
+import Place from './components/Place'
+import Rect from './components/Rect'
 
-import './App.css'
+import './App.scss'
 
 const QUAKES_URL = 'https://apis.is/earthquake/is'
 const SCATTER_PADDING = 20
-const BAR_PADDING = 1
 const INITIAL_WIDTH = document.body.clientWidth * .8
 
 class App extends Component {
@@ -40,6 +40,7 @@ class App extends Component {
   }
 
   componentDidMount = () => {
+    this.handleResize()
     window.addEventListener('resize', this.handleResize)
     this.fetchQuakes()
     this.interval = setInterval(this.fetchQuakes, 1000 * 60)
@@ -55,24 +56,22 @@ class App extends Component {
     this.setState({ width: mapRef.offsetWidth, height: mapRef.offsetWidth / 2 })
   }
 
- renderLargeGraph = ({ quakes, count, height, width, padding }) => {
+ renderLargeGraph = ({ quakes, count, height, width }) => {
     const scaleHeight = buildRScale(quakes, height)
 
     return (
       <svg className='quakes-bar-graph' height={height} width={width}>
-        { quakes.map((quake, i) => (
+        { quakes.map(({ humanReadableLocation, size, timestamp }, i) => (
           <Rect
-            i={i}
             className='quake quake-bar'
-            fill={`rgb(${quake.size * 120},0,0)`}
-            height={scaleHeight(quake.size)}
-            key={quake.timestamp}
-            quake={quake}
+            fill={`rgb(${size * 120},0,0)`}
+            height={scaleHeight(size)}
+            key={timestamp}
             width={width / count}
             x={i * width / count}
-            y={height - scaleHeight(quake.size)}
+            y={height - scaleHeight(size)}
           >
-            <title>{`Size ${quake.size} occured at ${quake.timestamp} ${quake.humanReadableLocation}`}</title>
+            <title>{`Size ${size} occured at ${timestamp} ${humanReadableLocation}`}</title>
           </Rect>
         ))}
       </svg>
@@ -102,19 +101,19 @@ class App extends Component {
               </text>
             </g>
           ))}
-          {places.map((place, i) => (
-            // TODO: Place component
-            <g key={place.properties.name}>
-              <path className='place' d={path(place)} fill='grey' />
-              <text className='place-label'
+          {places.map(place => (
+            <Place
+              coordinates={place.geometry.coordinates}
+              data={path(place)}
+              key={place.properties.name}
+              name={place.properties.name}
+              textTransform={`translate(${this.projection(place.geometry.coordinates)})`}
+            >
+              <text className={`place-label ${place.geometry.coordinates[0] > -22 ? 'start' : 'end'}`}
                 dy='.35em'
                 x={place.geometry.coordinates[0] > -22 ? 6 : -6}
-                transform={`translate(${this.projection(place.geometry.coordinates)})`}
-                style={{ textAnchor: place.geometry.coordinates[0] > -22 ? 'start' : 'end'}}
-              >
-                {place.properties.name}
-              </text>
-            </g>
+              />
+            </Place>
           ))}
           {quakes.map((quake, i) => (
             // TODO: Circle component
@@ -147,7 +146,7 @@ class App extends Component {
 
       <div className='Map center' ref={map => {this.mapRef = map}}>
         <div className='bar-graph-container'>
-          { this.renderLargeGraph({ quakes: this.state.quakes, count: this.state.count, height: this.state.width / 4, width: this.state.width, padding: BAR_PADDING }) }
+          { this.renderLargeGraph({ quakes: this.state.quakes, count: this.state.count, height: this.state.width / 4, width: this.state.width }) }
         </div>
         <div className='map-container'>
           { this.renderMap({ data: mapData, quakes: this.state.quakes, height: this.state.height, width: this.state.width, padding: SCATTER_PADDING }) }
