@@ -107,13 +107,11 @@ class App extends Component {
               data={path(place)}
               key={place.properties.name}
               name={place.properties.name}
+              textClass={`place-label ${place.geometry.coordinates[0] > -22 ? 'start' : 'end'}`}
+              textDy='.35em'
               textTransform={`translate(${this.projection(place.geometry.coordinates)})`}
-            >
-              <text className={`place-label ${place.geometry.coordinates[0] > -22 ? 'start' : 'end'}`}
-                dy='.35em'
-                x={place.geometry.coordinates[0] > -22 ? 6 : -6}
-              />
-            </Place>
+              textX={place.geometry.coordinates[0] > -22 ? 6 : -6}
+            />
           ))}
           {quakes.map((quake, i) => (
             // TODO: Circle component
