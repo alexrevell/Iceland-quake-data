@@ -1,7 +1,7 @@
 import scaleLinear from 'd3-scale/src/linear'
 import { mapAttrs, max, min, over, pipe } from './utils'
 
-const minMax = over(Math.min, Math.max)
+const minMax = over(min, max)
 
 export function buildXScale(data, width, padding) {
   const [ min, max ] = pipe(
